@@ -1,0 +1,24 @@
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\DCPU_16.Properties.Resources.resources
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\DCPU_16.Window.resources
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\bin\Debug\DCPU-16.exe
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\bin\Debug\DCPU-16.pdb
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\DCPU-16.exe
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\DCPU-16.pdb
+C:\Users\User\AppData\Local\Temporary Projects\DCPU-16\obj\x86\Debug\DCPU_16.OpenFileDisplay.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\DCPU-16.exe
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\DCPU-16.pdb
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\FastColoredTextBoxNS.FastColoredTextBox.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\FastColoredTextBoxNS.FindForm.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\DCPU_16.Window.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\FastColoredTextBoxNS.GoToForm.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\DCPU_16.OpenFileDisplay.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\DCPU_16.Properties.Resources.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\FastColoredTextBoxNS.ReplaceForm.resources
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\bin\Debug\DCPU-16.exe
+C:\Users\User\Documents\0x10c\DCPU-16\DCPU-16\DCPU-16\bin\Debug\DCPU-16.pdb
