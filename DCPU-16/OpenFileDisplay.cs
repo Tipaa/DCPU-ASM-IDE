@@ -75,5 +75,40 @@ namespace DCPU_16
         {
             File.WriteAllText(this.Text.Substring(11), sourceCodeBox.Text);
         }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.Cut();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.Copy();
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.Paste();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.Undo();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.Redo();
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.Refresh();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles,Standards.CompiledFiles,Standards.AllFiles);
+        }
     }
 }

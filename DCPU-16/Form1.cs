@@ -61,5 +61,10 @@ namespace DCPU_16
         {
             new OpenFileDisplay(openFileDialog.FileName,false).ShowDialog();
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new About().ShowDialog();
+        }
     }
 }
