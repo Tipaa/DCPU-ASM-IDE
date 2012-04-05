@@ -57,6 +57,8 @@
             this.redditOnlineHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.dCPU16ProjectdprojToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.projectFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menustrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,7 +94,8 @@
             // 
             this.newToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sourceFiledcpuToolStripMenuItem,
-            this.compiledProgram0x10cToolStripMenuItem});
+            this.compiledProgram0x10cToolStripMenuItem,
+            this.dCPU16ProjectdprojToolStripMenuItem});
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newToolStripMenuItem.Text = "New...";
@@ -100,22 +103,23 @@
             // sourceFiledcpuToolStripMenuItem
             // 
             this.sourceFiledcpuToolStripMenuItem.Name = "sourceFiledcpuToolStripMenuItem";
-            this.sourceFiledcpuToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.sourceFiledcpuToolStripMenuItem.Text = "Source File (.dcpu)";
+            this.sourceFiledcpuToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.sourceFiledcpuToolStripMenuItem.Text = "Source File (.dasm)";
             this.sourceFiledcpuToolStripMenuItem.Click += new System.EventHandler(this.sourceFiledcpuToolStripMenuItem_Click);
             // 
             // compiledProgram0x10cToolStripMenuItem
             // 
             this.compiledProgram0x10cToolStripMenuItem.Name = "compiledProgram0x10cToolStripMenuItem";
-            this.compiledProgram0x10cToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.compiledProgram0x10cToolStripMenuItem.Text = "Compiled Program (.0x10c)";
+            this.compiledProgram0x10cToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.compiledProgram0x10cToolStripMenuItem.Text = "Compiled Program (.dcpu)";
             this.compiledProgram0x10cToolStripMenuItem.Click += new System.EventHandler(this.compiledProgram0x10cToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sourceFileToolStripMenuItem,
-            this.compiledProgramToolStripMenuItem});
+            this.compiledProgramToolStripMenuItem,
+            this.projectFileToolStripMenuItem});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open...";
@@ -139,6 +143,7 @@
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
@@ -273,6 +278,20 @@
             // 
             this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.OpenFileDialog_FileOk);
             // 
+            // dCPU16ProjectdprojToolStripMenuItem
+            // 
+            this.dCPU16ProjectdprojToolStripMenuItem.Name = "dCPU16ProjectdprojToolStripMenuItem";
+            this.dCPU16ProjectdprojToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.dCPU16ProjectdprojToolStripMenuItem.Text = "DCPU-16 Project (.dproj)";
+            this.dCPU16ProjectdprojToolStripMenuItem.Click += new System.EventHandler(this.dCPU16ProjectdprojToolStripMenuItem_Click);
+            // 
+            // projectFileToolStripMenuItem
+            // 
+            this.projectFileToolStripMenuItem.Name = "projectFileToolStripMenuItem";
+            this.projectFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.projectFileToolStripMenuItem.Text = "Project File";
+            this.projectFileToolStripMenuItem.Click += new System.EventHandler(this.projectFileToolStripMenuItem_Click);
+            // 
             // Window
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -322,6 +341,8 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ToolStripMenuItem sourceFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem compiledProgramToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dCPU16ProjectdprojToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem projectFileToolStripMenuItem;
     }
 }
 

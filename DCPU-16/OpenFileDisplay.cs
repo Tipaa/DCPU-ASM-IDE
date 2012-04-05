@@ -19,11 +19,13 @@ namespace DCPU_16
         public OpenFileDisplay(String s,bool isNew)
         {
             InitializeComponent();
-            this.Text += s;
+            this.Text += s;         
             if (!isNew)
             {
                 LoadFile(s);
             }
+            setToolStrip();
+            sourceCodeBox.SelectionChanged += new EventHandler(this.sourceCodeBox_updateText);
         }
 
         private void OpenFileDisplay_Load(object sender, EventArgs e)
@@ -47,6 +49,7 @@ namespace DCPU_16
         private void sourceCodeBox_textChanged(object sender, TextChangedEventArgs e)
         {
             changeStyles(e.ChangedRange);
+            setToolStrip();
         }
 
         public void changeStyles(Range changedRange)
@@ -59,6 +62,13 @@ namespace DCPU_16
             changedRange.SetStyle(styles.HexPrefix, styles.regexHexPrefixes);
             changedRange.SetStyle(styles.CommentStyle, styles.regexComments);
             changedRange.SetStyle(styles.MacroStyle, styles.regexMacros);
+        }
+
+        public void setToolStrip()
+        {
+            this.toolStripFileType.Text = "Source file";
+            this.toolStripFileLength.Text = sourceCodeBox.LinesCount + " Lines of code";
+            this.toolStripCurserPosition.Text = "Ln: " + sourceCodeBox.Selection.Start.iLine + " Col: " + sourceCodeBox.Selection.Start.iChar;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -109,6 +119,11 @@ namespace DCPU_16
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles,Standards.CompiledFiles,Standards.AllFiles);
+        }
+
+        private void sourceCodeBox_updateText(object sender, EventArgs e)
+        {
+            setToolStrip();
         }
     }
 }

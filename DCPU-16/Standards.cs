@@ -12,10 +12,12 @@ namespace DCPU_16
         {
             extension = ext;
             description = desc;
+            raw = extension.Substring(1);
         }
 
         public string extension;
         public string description;
+        public string raw;
 
         public string getFormatted()
         {
@@ -39,5 +41,6 @@ namespace DCPU_16
         public static readonly Standard SourceFiles = new Standard("*.dasm","DCPU Assembler Source");
         public static readonly Standard CompiledFiles = new Standard("*.dcpu", "DCPU Assembled Program");
         public static readonly Standard AllFiles = new Standard("*.*", "All Files");
+        public static readonly Standard ProjectFiles = new Standard("*.dproj", "DCPU Assembly Projects");
     }
 }

@@ -24,7 +24,7 @@ namespace DCPU_16
         public string regexLiterals = "(0x|0d|0o|0b)[0-9a-fA-F]{0,4},?";
         public string regexHexPrefixes = "0x";
         public string regexLabels = "^:[^ .]+,?|\\[[a-zA-Z0-9]\\],?";
-        public string regexComments = ";.*$";
+        public string regexComments = ";.*";
         public string regexMacros = "\\[(vram|start|crash|end|exit)\\]";
 
    }
