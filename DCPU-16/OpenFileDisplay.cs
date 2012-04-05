@@ -58,6 +58,7 @@ namespace DCPU_16
             changedRange.SetStyle(styles.LabelStyle, styles.regexLabels);
             changedRange.SetStyle(styles.HexPrefix, styles.regexHexPrefixes);
             changedRange.SetStyle(styles.CommentStyle, styles.regexComments);
+            changedRange.SetStyle(styles.MacroStyle, styles.regexMacros);
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)

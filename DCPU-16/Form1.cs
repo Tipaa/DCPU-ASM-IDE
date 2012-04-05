@@ -29,7 +29,7 @@ namespace DCPU_16
 
         private void sourceFiledcpuToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog.Filter = "DCPU Assembler files (*.dcpu)|*.dcpu|Compiled DCPU files (*.0x10c)|*.0x10c|All Files (*.*)|*.*";
+            saveFileDialog.Filter = Standard.getCombined(Standards.SourceFiles,Standards.AllFiles);
             saveFileDialog.ShowDialog();
         }
 
