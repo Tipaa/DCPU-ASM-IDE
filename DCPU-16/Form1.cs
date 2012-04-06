@@ -44,19 +44,19 @@ namespace DCPU_16
 
         private void compiledProgram0x10cToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog.Filter = Standard.getCombined(Standards.ProjectFiles,Standards.SourceFiles, Standards.CompiledFiles, Standards.AllFiles);
+            saveFileDialog.Filter = Standard.getCombined(Standards.CompiledFiles, Standards.AllFiles);
             saveFileDialog.ShowDialog();
         }
 
         private void sourceFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog.Filter = Standard.getCombined(Standards.ProjectFiles, Standards.SourceFiles, Standards.CompiledFiles, Standards.AllFiles);
+            openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles, Standards.AllFiles);
             openFileDialog.ShowDialog();
         }
 
         private void compiledProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog.Filter = Standard.getCombined(Standards.ProjectFiles,Standards.SourceFiles,Standards.CompiledFiles,Standards.AllFiles);
+            openFileDialog.Filter = Standard.getCombined(Standards.ProjectFiles,Standards.AllFiles);
             openFileDialog.ShowDialog();
         }
 

@@ -58,10 +58,12 @@ namespace DCPU_16
             changedRange.SetStyle(styles.KeywordStyle, styles.regexKeywords);
             changedRange.SetStyle(styles.RegisterStyle, styles.regexRegisters);
             changedRange.SetStyle(styles.LiteralStyle, styles.regexLiterals);
+            changedRange.SetStyle(styles.DeclaredLabelStyle, styles.regexDeclareLabels);
             changedRange.SetStyle(styles.LabelStyle, styles.regexLabels);
             changedRange.SetStyle(styles.HexPrefix, styles.regexHexPrefixes);
             changedRange.SetStyle(styles.CommentStyle, styles.regexComments);
             changedRange.SetStyle(styles.MacroStyle, styles.regexMacros);
+            changedRange.SetStyle(styles.PointerStyle, styles.regexPointers);
         }
 
         public void setToolStrip()
@@ -124,6 +126,11 @@ namespace DCPU_16
         private void sourceCodeBox_updateText(object sender, EventArgs e)
         {
             setToolStrip();
+        }
+
+        private void compileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Parser.parse(sourceCodeBox.Text, this.Text.Substring(11));
         }
     }
 }

@@ -86,6 +86,7 @@
     <Compile Include="LimitedStack.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="LinesAccessor.cs" />
+    <Compile Include="MachineCode.cs" />
     <Compile Include="OpenFileDisplay.cs">
       <SubType>Form</SubType>
     </Compile>
