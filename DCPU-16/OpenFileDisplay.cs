@@ -15,9 +15,12 @@ namespace DCPU_16
     public partial class OpenFileDisplay : Form
     {
         private CodeStyles styles = new CodeStyles();
+        public readonly string fileOpen;
+        public bool hasModified = false;
 
         public OpenFileDisplay(String s,bool isNew)
         {
+            fileOpen = s;
             InitializeComponent();
             this.Text += s;         
             if (!isNew)
@@ -26,6 +29,7 @@ namespace DCPU_16
             }
             setToolStrip();
             sourceCodeBox.SelectionChanged += new EventHandler(this.sourceCodeBox_updateText);
+            openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles);
         }
 
         private void OpenFileDisplay_Load(object sender, EventArgs e)
@@ -50,6 +54,7 @@ namespace DCPU_16
         {
             changeStyles(e.ChangedRange);
             setToolStrip();
+            hasModified = true;
         }
 
         public void changeStyles(Range changedRange)
@@ -68,6 +73,14 @@ namespace DCPU_16
 
         public void setToolStrip()
         {
+            if (hasModified)
+            {
+                this.Text = "Edit File: " + fileOpen + " *";
+            }
+            else
+            {
+                this.Text = "Edit File: " + fileOpen;
+            }
             this.toolStripFileType.Text = "Source file";
             this.toolStripFileLength.Text = sourceCodeBox.LinesCount + " Lines of code";
             this.toolStripCurserPosition.Text = "Ln: " + sourceCodeBox.Selection.Start.iLine + " Col: " + sourceCodeBox.Selection.Start.iChar;
@@ -75,7 +88,7 @@ namespace DCPU_16
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            File.WriteAllText(this.Text.Substring(11), sourceCodeBox.Text);
+            saveFile();
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -83,9 +96,15 @@ namespace DCPU_16
             saveFileDialog.ShowDialog();
         }
 
+        private void saveFile()
+        {
+            this.hasModified = false;
+            File.WriteAllText(fileOpen, sourceCodeBox.Text);
+        }
+
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            File.WriteAllText(this.Text.Substring(11), sourceCodeBox.Text);
+            saveFile();
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -130,7 +149,7 @@ namespace DCPU_16
 
         private void compileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Parser.parse(sourceCodeBox.Text, this.Text.Substring(11));
+            Emulator.compileTo(sourceCodeBox.Text, fileOpen);
         }
     }
 }
