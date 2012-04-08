@@ -52,6 +52,9 @@
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Assembler.cs" />
+    <Compile Include="Assembler.Interfect.cs" />
+    <Compile Include="Emulator.cs" />
     <Compile Include="AutocompleteItem.cs" />
     <Compile Include="AutocompleteMenu.cs">
       <SubType>Component</SubType>
@@ -86,7 +89,7 @@
     <Compile Include="LimitedStack.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="LinesAccessor.cs" />
-    <Compile Include="MachineCode.cs" />
+    <Compile Include="Macros.cs" />
     <Compile Include="OpenFileDisplay.cs">
       <SubType>Form</SubType>
     </Compile>

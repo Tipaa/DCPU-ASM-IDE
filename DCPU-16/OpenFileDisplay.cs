@@ -27,6 +27,7 @@ namespace DCPU_16
             {
                 LoadFile(s);
             }
+            this.hasModified = false;
             setToolStrip();
             sourceCodeBox.SelectionChanged += new EventHandler(this.sourceCodeBox_updateText);
             openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles);
@@ -60,15 +61,16 @@ namespace DCPU_16
         public void changeStyles(Range changedRange)
         {
             changedRange.ClearStyle();
-            changedRange.SetStyle(styles.KeywordStyle, styles.regexKeywords);
-            changedRange.SetStyle(styles.RegisterStyle, styles.regexRegisters);
-            changedRange.SetStyle(styles.LiteralStyle, styles.regexLiterals);
-            changedRange.SetStyle(styles.DeclaredLabelStyle, styles.regexDeclareLabels);
-            changedRange.SetStyle(styles.LabelStyle, styles.regexLabels);
-            changedRange.SetStyle(styles.HexPrefix, styles.regexHexPrefixes);
-            changedRange.SetStyle(styles.CommentStyle, styles.regexComments);
-            changedRange.SetStyle(styles.MacroStyle, styles.regexMacros);
-            changedRange.SetStyle(styles.PointerStyle, styles.regexPointers);
+            CodeStyles.catchlabels(sourceCodeBox.Text);
+            changedRange.SetStyle(styles.CommentStyle, CodeStyles.regexComments);
+            changedRange.SetStyle(styles.KeywordStyle, CodeStyles.regexKeywords);
+            changedRange.SetStyle(styles.RegisterStyle, CodeStyles.regexRegisters);
+            changedRange.SetStyle(styles.HexPrefix, CodeStyles.regexHexPrefixes);
+            changedRange.SetStyle(styles.LiteralStyle, CodeStyles.regexLiterals);
+            changedRange.SetStyle(styles.DeclaredLabelStyle, CodeStyles.regexDeclareLabels);
+            changedRange.SetStyle(styles.LabelStyle, CodeStyles.regexLabels);                       
+            changedRange.SetStyle(styles.MacroStyle, CodeStyles.regexMacros);
+            changedRange.SetStyle(styles.PointerStyle, CodeStyles.regexPointers);
         }
 
         public void setToolStrip()
@@ -99,6 +101,7 @@ namespace DCPU_16
         private void saveFile()
         {
             this.hasModified = false;
+            setToolStrip();
             File.WriteAllText(fileOpen, sourceCodeBox.Text);
         }
 
@@ -149,7 +152,7 @@ namespace DCPU_16
 
         private void compileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Emulator.compileTo(sourceCodeBox.Text, fileOpen);
+            new ClearState(sourceCodeBox.Text, this.fileOpen).pass().pass().pass().pass();
         }
     }
 }
