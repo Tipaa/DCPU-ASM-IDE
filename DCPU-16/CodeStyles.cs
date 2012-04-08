@@ -21,9 +21,10 @@ namespace DCPU_16
         public Style MacroStyle = new TextStyle(Brushes.Navy, null, FontStyle.Italic|FontStyle.Bold);
         public Style PointerStyle = new TextStyle(Brushes.Plum, null, FontStyle.Bold);
         public Style LabelStyle = new TextStyle(Brushes.Orange, null, FontStyle.Regular);
+        public Style ErrorStyle = new TextStyle(Brushes.Red, null, FontStyle.Bold | FontStyle.Underline);
 
         public static string regexKeywords = "(SET|ADD|SUB|MUL|DIV|MOD|SHL|SHR|AND|BOR|XOR|IFE|IFN|IFG|IFB|DAT|JSR) ";
-        public static string regexRegisters = " (A|B|C|I|J|X|Y|Z|SP|PC|O|POP|PUSH|PEEK),? ?";
+        public static string regexRegisters = "(,| )+(A|B|C|I|J|X|Y|Z|SP|PC|O|POP|PUSH|PEEK)(\\s+)?(,|\\n|;)";
         public static string regexLiterals = "(((0x|0d|0o|0b)[0-9a-fA-F]{0,8},?)|DAT (([^\\d]\\w)\\w+),? (((0x|0d|0o|0b)[0-9a-fA-F]{1,8})|(\"(.*)\")))";
         public static string regexHexPrefixes = "(0x|0d|0o|0b)";
         public static string regexDeclareLabels = "(^|\\r|\\n):((\\S)*)";
@@ -31,6 +32,7 @@ namespace DCPU_16
         public static string regexComments = ";(.*)?";
         public static string regexMacros = "(vram|crash|end|exit)";
         public static string regexPointers = "\\[.*\\]";
+        public static string regexError = "\\w*";
 
         public static void catchlabels(String input)
         {

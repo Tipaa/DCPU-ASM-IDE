@@ -60,6 +60,7 @@ namespace DCPU_16
 
         public void changeStyles(Range changedRange)
         {
+            changedRange = sourceCodeBox.Range;
             changedRange.ClearStyle();
             CodeStyles.catchlabels(sourceCodeBox.Text);
             changedRange.SetStyle(styles.CommentStyle, CodeStyles.regexComments);
@@ -71,6 +72,7 @@ namespace DCPU_16
             changedRange.SetStyle(styles.LabelStyle, CodeStyles.regexLabels);                       
             changedRange.SetStyle(styles.MacroStyle, CodeStyles.regexMacros);
             changedRange.SetStyle(styles.PointerStyle, CodeStyles.regexPointers);
+            changedRange.SetStyle(styles.ErrorStyle, CodeStyles.regexError);
         }
 
         public void setToolStrip()
