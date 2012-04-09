@@ -228,6 +228,20 @@ namespace DCPU_16
 
         private void compile()
         {
+            string source = sourceCodeBox.Text;
+            string repl = "";
+            foreach (string key in Macros.macros.Keys)
+            {
+                if (Macros.macros.TryGetValue(key, out repl))
+                {
+                    source = source.Replace(key, repl);
+                }
+            }
+            if (hasModified && MessageBox.Show("Code must be saved before compiling.", "Save code", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+            {
+                return;
+            }
+            File.WriteAllText(fileOpen, source);
             int errorline = 0;
             string errortext = "";
             if (new CDCPU16Assemble().Assemble(fileOpen, out errorline, out errortext))
@@ -238,6 +252,7 @@ namespace DCPU_16
             {
                 MessageBox.Show("Error at line "+errorline+'\n'+errortext);
             }
+            File.WriteAllText(fileOpen, sourceCodeBox.Text);
         }
     }
 

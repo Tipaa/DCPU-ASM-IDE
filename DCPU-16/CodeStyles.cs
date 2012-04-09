@@ -47,7 +47,7 @@ namespace DCPU_16
         public static string regexMacros = "\\.(vram|crash|end|exit|include)";  //All the current macros
         public static string regexError = ".*";                             //All other code
         
-        public static string regexLiterals = "((" + regexHexPrefixes + "[0-9a-fA-F]{1,8},?)|DAT " + regexValidName + ",? (("+regexHexPrefixes+"[0-9a-fA-F]{1,8})|(\"(.*)\")))";
+        public static string regexLiterals = "((" + regexHexPrefixes + "[0-9a-fA-F]{1,8},?)|DAT " + regexValidName + ",? (("+regexHexPrefixes+"[0-9a-fA-F]{1,8})|(\"(.*)\"))|(\"\\w+\"))";
         public static string regexCanPoint = "((" + regexAllRegisters + ")|(" + regexLiterals + ")|(" + regexMacros + ")|(" + regexMaths + "))";
         public static string regexDeclareLabels = "(^|\\r|\\n):"+regexValidName;    //:<name>
         public static string regexLabels = regexCanPoint+",?";              //A label name

@@ -13,9 +13,10 @@ namespace DCPU_16
 
         public static object hook()
         {
-            macros.Add("vram", "0x8000");
-            macros.Add("crash", "0xff80");
+            macros.Add(".vram", "0x8000");
+            macros.Add(".crash", "0xff80");
             macros.Add("BRK", "SET PC, 0x0000");
+            macros.Add(".keyboard", "0x9000");
 
             return null;
         }
