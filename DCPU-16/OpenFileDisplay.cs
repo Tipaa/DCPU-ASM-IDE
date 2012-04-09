@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using FastColoredTextBoxNS;
 using System.Text.RegularExpressions;
+using dcpu16_ASM;
 
 namespace DCPU_16
 {
@@ -17,6 +18,7 @@ namespace DCPU_16
         private CodeStyles styles = new CodeStyles();
         public readonly string fileOpen;
         public bool hasModified = false;
+        public Dictionary<uint, Error> lineErrors;
 
         public OpenFileDisplay(String s,bool isNew)
         {
@@ -40,10 +42,7 @@ namespace DCPU_16
         private void LoadFile(String filename)
         {
             sourceCodeBox.Text = File.ReadAllText(filename);
-            Range all = new Range(sourceCodeBox);
-            all.Start = new Place(0, 0);
-            all.End = new Place(sourceCodeBox.Lines.Last().Length, sourceCodeBox.LinesCount);
-            changeStyles(new Range(sourceCodeBox));
+            changeStyles();
         }
 
         private void highlight()
@@ -53,25 +52,28 @@ namespace DCPU_16
 
         private void sourceCodeBox_textChanged(object sender, TextChangedEventArgs e)
         {
-            changeStyles(e.ChangedRange);
+            changeStyles();
             setToolStrip();
             hasModified = true;
         }
 
-        public void changeStyles(Range changedRange)
+        public void changeStyles()
         {
-            changedRange = sourceCodeBox.Range;
-            changedRange.ClearStyle();
             CodeStyles.catchlabels(sourceCodeBox.Text);
+            Range changedRange = sourceCodeBox.Range;
+            changedRange.ClearStyle();
             changedRange.SetStyle(styles.CommentStyle, CodeStyles.regexComments);
-            changedRange.SetStyle(styles.KeywordStyle, CodeStyles.regexKeywords);
-            changedRange.SetStyle(styles.RegisterStyle, CodeStyles.regexRegisters);
-            changedRange.SetStyle(styles.HexPrefix, CodeStyles.regexHexPrefixes);
-            changedRange.SetStyle(styles.LiteralStyle, CodeStyles.regexLiterals);
+            changedRange.SetStyle(styles.CommaStyle, CodeStyles.regexCommaSeparator);
+            changedRange.SetStyle(styles.KeywordStyle, CodeStyles.regexBasicKeywords);
+            changedRange.SetStyle(styles.KeywordStyle, CodeStyles.regexNonBasicKeywords);
+            changedRange.SetStyle(styles.RegisterStyle, CodeStyles.regexAllRegisters);
             changedRange.SetStyle(styles.DeclaredLabelStyle, CodeStyles.regexDeclareLabels);
-            changedRange.SetStyle(styles.LabelStyle, CodeStyles.regexLabels);                       
+            changedRange.SetStyle(styles.HexPrefix, CodeStyles.regexHexPrefixes);
+            changedRange.SetStyle(styles.LiteralStyle, CodeStyles.regexLiterals);            
             changedRange.SetStyle(styles.MacroStyle, CodeStyles.regexMacros);
             changedRange.SetStyle(styles.PointerStyle, CodeStyles.regexPointers);
+            changedRange.SetStyle(styles.LabelStyle, CodeStyles.regexLabels);
+            changedRange.SetStyle(styles.DefaultStyle, CodeStyles.regexSpace);
             changedRange.SetStyle(styles.ErrorStyle, CodeStyles.regexError);
         }
 
@@ -97,7 +99,10 @@ namespace DCPU_16
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog.ShowDialog();
+            if (saveFileDialog.ShowDialog().Equals(DialogResult.OK))
+            {
+                saveFile();
+            }
         }
 
         private void saveFile()
@@ -112,6 +117,7 @@ namespace DCPU_16
             saveFile();
         }
 
+        #region EditMenu
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sourceCodeBox.Cut();
@@ -141,10 +147,63 @@ namespace DCPU_16
         {
             sourceCodeBox.Refresh();
         }
+        #endregion
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+
+            if (keyData == (Keys.F5))
+            {
+                sourceCodeBox.Refresh();
+                return true;
+            }
+
+            if (keyData == (Keys.F9))
+            {
+                compile();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                sourceCodeBox.ShowFindDialog();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.Z))
+            {
+                sourceCodeBox.Undo();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.Y))
+            {
+                sourceCodeBox.Redo();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.X))
+            {
+                sourceCodeBox.Cut();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.C))
+            {
+                sourceCodeBox.Copy();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.V))
+            {
+                sourceCodeBox.Paste();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.S))
+            {
+                saveFile();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles,Standards.CompiledFiles,Standards.AllFiles);
+            saveFileDialog.Filter = Standard.getCombined(Standards.SourceFiles,Standards.CompiledFiles,Standards.AllFiles);
         }
 
         private void sourceCodeBox_updateText(object sender, EventArgs e)
@@ -154,7 +213,45 @@ namespace DCPU_16
 
         private void compileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ClearState(sourceCodeBox.Text, this.fileOpen).pass().pass().pass().pass();
+            compile();
+        }
+
+        private void findReplaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.ShowReplaceDialog();
+        }
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sourceCodeBox.ShowFindDialog();
+        }
+
+        private void compile()
+        {
+            if (new CDCPU16Assemble().Assemble(fileOpen))
+            {
+                MessageBox.Show("Build succeeded!");
+            }
+            else
+            {
+                MessageBox.Show("Error");
+            }
         }
     }
+
+    public class Error
+    {
+        string description;
+
+        public Error(string s)
+        {
+            description = s;
+        }
+
+        public string getError()
+        {
+            return description;
+        }
+    }
+
 }

@@ -51,25 +51,23 @@ namespace DCPU_16
         private void sourceFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles, Standards.AllFiles);
-            openFileDialog.ShowDialog();
+            if (openFileDialog.ShowDialog().Equals(DialogResult.OK))
+            {
+                new OpenFileDisplay(openFileDialog.FileName, false).ShowDialog();
+            }
         }
 
         private void compiledProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openFileDialog.Filter = Standard.getCombined(Standards.ProjectFiles,Standards.AllFiles);
-            openFileDialog.ShowDialog();
+            if (openFileDialog.ShowDialog().Equals(DialogResult.OK))
+            {
+                new OpenFileDisplay(openFileDialog.FileName, false).ShowDialog();
+            }
         }
 
         private void OpenFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            if (Path.GetExtension(openFileDialog.FileName).Equals(Standards.ProjectFiles.raw))
-            {
-                openProject(openFileDialog.FileName);
-            }
-            else
-            {
-                new OpenFileDisplay(openFileDialog.FileName, false).ShowDialog();
-            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -96,7 +94,10 @@ namespace DCPU_16
         private void projectFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openFileDialog.Filter = Standard.getCombined(Standards.ProjectFiles);
-            openFileDialog.ShowDialog();
+            if (openFileDialog.ShowDialog().Equals(DialogResult.OK))
+            {
+                new OpenFileDisplay(openFileDialog.FileName, false).ShowDialog();
+            }
         }
     }
 }

@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.JScript" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -53,7 +54,6 @@
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
     <Compile Include="Assembler.cs" />
-    <Compile Include="Assembler.Interfect.cs" />
     <Compile Include="Emulator.cs" />
     <Compile Include="AutocompleteItem.cs" />
     <Compile Include="AutocompleteMenu.cs">
@@ -90,6 +90,7 @@
     <Compile Include="Line.cs" />
     <Compile Include="LinesAccessor.cs" />
     <Compile Include="Macros.cs" />
+    <Compile Include="OpCodes.cs" />
     <Compile Include="OpenFileDisplay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,6 +104,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Range.cs" />
+    <Compile Include="RegisterCodes.cs" />
     <Compile Include="ReplaceForm.cs">
       <SubType>Form</SubType>
     </Compile>

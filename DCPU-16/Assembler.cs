@@ -1,637 +1,486 @@
-﻿using System;
+﻿/**
+ * DCPU-16 ASM.NET
+ * Copyright (c) 2012 Tim "DensitY" Hancock (densitynz@orcon.net.nz)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Windows.Forms;
+using DCPU_16;
 
-namespace DCPU_16
+namespace dcpu16_ASM
 {
-    class Assembler
+    public class OpParamResult
     {
+        public ushort Param;
+        public bool nextWord;
+        public ushort NextWordValue;
+        public string labelName;
+
+        public bool illegal = false;
+
+        public OpParamResult()
+        {
+            Param = 0x0;
+            nextWord = false;
+            NextWordValue = 0x0;
+            labelName = "";
+            illegal = false;
+        }
     }
 
-    class Line
+    public class CDCPU16Assemble
     {
-        public string text;
-        public ushort pointer;
-        public Operation compiled;
-        public List<ushort> literals=new List<ushort>();
+        private Dictionary<string, dcpuOpCode> m_opDictionary = new Dictionary<string, dcpuOpCode>();
+        private Dictionary<string, dcpuRegisterCodes> m_regDictionary = new Dictionary<string, dcpuRegisterCodes>();
 
-        public static List<Line> lines = new List<Line>();
-        public static Dictionary<ushort, string> labels = new Dictionary<ushort,string>();
-        public static List<Line> deferredLines = new List<Line>();
+        private Dictionary<string, ushort> m_labelAddressDitionary = new Dictionary<string, ushort>();
 
-        public static void setLabels(Dictionary<ushort, string> dict)
+        private Dictionary<ushort, string> m_labelReferences = new Dictionary<ushort, string>();
+
+        private List<ushort> machineCode = new List<ushort>();
+
+        private string m_filename = "";
+
+        public CDCPU16Assemble()
         {
-            labels = dict;
+            BuildDictionaries();
         }
 
-        public static string compileAll()
+        private void BuildDictionaries()
         {
-            string bin = "";
-            foreach (Line line in lines)
-            {
-                line.compile();
-            }
-            foreach (Line line in deferredLines)
-            {
-                line.compile();
-            }
-            foreach (Line line in lines)
-            {
-                bin+=line.compile().binary;
-            }
-            return bin;
+            m_opDictionary.Clear();
+            m_regDictionary.Clear();
+
+            // non basic instructions
+            m_opDictionary.Add("jsr", dcpuOpCode.JSR_OP);
+
+            // basic instructions
+            m_opDictionary.Add("set", dcpuOpCode.SET_OP);
+            m_opDictionary.Add("add", dcpuOpCode.ADD_OP);
+            m_opDictionary.Add("sub", dcpuOpCode.SUB_OP);
+            m_opDictionary.Add("mul", dcpuOpCode.MUL_OP);
+            m_opDictionary.Add("div", dcpuOpCode.DIV_OP);
+            m_opDictionary.Add("mod", dcpuOpCode.MOD_OP);
+            m_opDictionary.Add("shl", dcpuOpCode.SHL_OP);
+            m_opDictionary.Add("shr", dcpuOpCode.SHR_OP);
+            m_opDictionary.Add("and", dcpuOpCode.AND_OP);
+            m_opDictionary.Add("bor", dcpuOpCode.BOR_OP);
+            m_opDictionary.Add("xor", dcpuOpCode.XOR_OP);
+            m_opDictionary.Add("ife", dcpuOpCode.IFE_OP);
+            m_opDictionary.Add("ifn", dcpuOpCode.IFN_OP);
+            m_opDictionary.Add("ifg", dcpuOpCode.IFG_OP);
+            m_opDictionary.Add("ifb", dcpuOpCode.IFB_OP);
+
+            // Register dictionary, We'll only include the most common ones in here, others have to be constructred. 
+
+            m_regDictionary.Add("a", dcpuRegisterCodes.A);
+            m_regDictionary.Add("b", dcpuRegisterCodes.B);
+            m_regDictionary.Add("c", dcpuRegisterCodes.C);
+            m_regDictionary.Add("x", dcpuRegisterCodes.X);
+            m_regDictionary.Add("y", dcpuRegisterCodes.Y);
+            m_regDictionary.Add("z", dcpuRegisterCodes.Z);
+            m_regDictionary.Add("i", dcpuRegisterCodes.I);
+            m_regDictionary.Add("j", dcpuRegisterCodes.J);
+
+            m_regDictionary.Add("[a]", dcpuRegisterCodes.A_Mem);
+            m_regDictionary.Add("[b]", dcpuRegisterCodes.B_Mem);
+            m_regDictionary.Add("[c]", dcpuRegisterCodes.C_Mem);
+            m_regDictionary.Add("[x]", dcpuRegisterCodes.X_Mem);
+            m_regDictionary.Add("[y]", dcpuRegisterCodes.Y_Mem);
+            m_regDictionary.Add("[z]", dcpuRegisterCodes.Z_Mem);
+            m_regDictionary.Add("[i]", dcpuRegisterCodes.I_Mem);
+            m_regDictionary.Add("[j]", dcpuRegisterCodes.J_Mem);
+
+            m_regDictionary.Add("pop", dcpuRegisterCodes.POP);
+            m_regDictionary.Add("peek", dcpuRegisterCodes.PEEK);
+            m_regDictionary.Add("push", dcpuRegisterCodes.PUSH);
+
+            m_regDictionary.Add("sp", dcpuRegisterCodes.SP);
+            m_regDictionary.Add("pc", dcpuRegisterCodes.PC);
+            m_regDictionary.Add("o", dcpuRegisterCodes.O);
+
+            m_regDictionary.Add("[+a]", dcpuRegisterCodes.A_NextWord);
+            m_regDictionary.Add("[+b]", dcpuRegisterCodes.B_NextWord);
+            m_regDictionary.Add("[+c]", dcpuRegisterCodes.C_NextWord);
+            m_regDictionary.Add("[+x]", dcpuRegisterCodes.X_NextWord);
+            m_regDictionary.Add("[+y]", dcpuRegisterCodes.Y_NextWord);
+            m_regDictionary.Add("[+z]", dcpuRegisterCodes.Z_NextWord);
+            m_regDictionary.Add("[+i]", dcpuRegisterCodes.I_NextWord);
+            m_regDictionary.Add("[+j]", dcpuRegisterCodes.J_NextWord);
         }
 
-        public Line(string s, ushort p)
+        private string[] SafeSplit(string data)
         {
-            text = s.Trim();
-            pointer = p;
+            string inString = data.Replace("\t", " ").Replace(",", " ");
+            string[] tmp = inString.Split(' ');
+            List<string> dat = new List<string>();
+            foreach (string t in tmp) if (t.Trim() != "") dat.Add(t);
+            return dat.ToArray();
         }
 
-        public void register()
+        private OpParamResult ParseParam(string _param)
         {
-            lines.Add(this);
-        }
+            OpParamResult opParamResult = new OpParamResult();
 
-        public int getLength()
-        {
-            return 2 + literals.Capacity*2;
-        }
-
-        public ushort[] getValues()
-        {
-            MessageBox.Show(text+"_");
-            ushort[] result = new ushort[2];
-            if (Regex.Split(text, "[^a-z^A-Z^0-9]").Length < 3)
+            // Find easy ones. 
+            string Param = _param.Replace(" ", "").Trim(); // strip spaces
+            if (m_regDictionary.ContainsKey(Param))
             {
-                return result;
+                // Ok things are really easy in this case. 
+                opParamResult.Param = (ushort)m_regDictionary[Param];
             }
-            result[0] = getValue(Regex.Split(text, "[^a-z^A-Z^0-9]")[1]);
-            result[1] = getValue(Regex.Split(text, "[^a-z^A-Z^0-9]")[2]);
-            return result;
-        }
-
-        public ushort getValue(string input)
-        {
-            if (input.StartsWith("0x"))
+            else
             {
-                literals.Add(Convert.ToUInt16(input,16));
-                return (0x1f);
-            }
-            if (input.StartsWith("0d"))
-            {
-                literals.Add(Convert.ToUInt16(input, 10));
-                return (0x1f);
-            }
-            if (input.StartsWith("0b"))
-            {
-                literals.Add(Convert.ToUInt16(input, 2));
-                return (0x1f);
-            }
-            if (Regex.IsMatch(input, "\\[[.*+]\\]"))
-            {
-                return (0x1e);
-            }
-            #region switch
-            switch (input)
-            {
-                    //Values
-                case "POP":
-                    return (0x18);
-                case "PEEK":
-                    return (0x19);
-                case "PUSH":
-                    return(0x1a);
-                case "SP":
-                    return(0x1b);
-                case "PC":
-                    return(0x1c);
-                case "O":
-                    return(0x1d);
-                    //Opcodes
-                case "SET":
-                    return(0x1);
-                case "ADD":
-                    return(0x2);
-                case "SUB":
-                    return(0x3);
-                case "MUL":
-                    return(0x4);
-                case "DIV":
-                    return(0x5);
-                case "MOD":
-                    return(0x6);
-                case "SHL":
-                    return(0x7);
-                case "SHR":
-                    return(0x8);
-                case "AND":
-                    return(0x9);
-                case "BOR":
-                    return(0xa);
-                case "XOR":
-                    return(0xb);
-                case "IFE":
-                    return(0xc);
-                case "IFN":
-                    return(0xd);
-                case "IFG":
-                    return(0xe);
-                case "IFB":
-                    return(0xf);
-            }
-            #endregion
-            foreach (ushort key in labels.Keys)
-            {
-                string label;
-                if (labels.TryGetValue(key,out label))
+                if (Param[0] == '[' && Param[Param.Length - 1] == ']')
                 {
-                    if (input == label)
+                    if (Param.Contains("+"))
                     {
-                        literals.Add(key);
-                        return key;
+                        string[] psplit = Param.Replace("[", "").Replace("]", "").Replace(" ", "").Split('+');
+                        if (psplit.Length < 2)
+                        {
+                            throw new Exception(string.Format("malformated memory reference '{0}'", Param));
+                        }
+                        string addressValue = psplit[0];
+                        if (m_regDictionary.ContainsKey("[+" + psplit[1] + "]") != true)
+                        {
+                            throw new Exception(string.Format("Invalid register reference in '{0}'", Param));
+                        }
+                        opParamResult.Param = (ushort)m_regDictionary["[+" + psplit[1] + "]"];
+                        opParamResult.nextWord = true;
+                        try
+                        {
+                            if (psplit[0].Contains("0x"))
+                            {
+                                ushort val = Convert.ToUInt16(psplit[0].Trim(), 16);
+                                opParamResult.NextWordValue = (ushort)val;
+                            }
+                            else
+                            {
+                                ushort val = Convert.ToUInt16(psplit[0].Trim(), 10);
+                                opParamResult.NextWordValue = (ushort)val;
+                            }
+                        }
+                        catch
+                        {
+
+                            opParamResult.nextWord = true;
+                            opParamResult.labelName = psplit[0].Trim();
+                        }
                     }
-                }
-            }
-            //If nothing found
-            deferredLines.Add(this);
-            return 0x0;
-        }
+                    else
+                    {
+                        opParamResult.Param = (ushort)dcpuRegisterCodes.NextWord_Literal_Mem;
+                        opParamResult.nextWord = true;
+                        try
+                        {
 
-        public ushort getOp()
-        {
-            return getValue(Regex.Split(text, "[^a-z^A-Z^0-9]")[0]);
-        }
+                            if (Param.Contains("0x"))
+                            {
+                                ushort val = (ushort)Convert.ToUInt16(Param.Replace("[", "").Replace("]", "").Trim(), 16);
+                                opParamResult.NextWordValue = val;
+                            }
+                            else
+                            {
+                                ushort val = (ushort)Convert.ToUInt16(Param.Replace("[", "").Replace("]", "").Trim(), 10);
+                                opParamResult.NextWordValue = val;
+                            }
+                        }
+                        catch
+                        {
 
-        public CompiledLine compile()
-        {
-            ushort[] values = getValues();
-            if (text.StartsWith(":"))
-            {
-                labels.Add((ushort)(getLength() + pointer), text.Substring(1, Math.Max(text.IndexOf(' '),1)));
-                text = Regex.Replace(text,CodeStyles.regexLabels,"");
-                MessageBox.Show(text);
-                return compile();
-            }
-            if (deferredLines.Contains(this))
-            {
-                return new CompiledLine(0, 0, 0, literals);
-            }
-            return new CompiledLine(getOp(),values[0],values[1],literals);
-        }
-    }
-
-    class CompiledLine
-    {
-        public string binary = "";
-
-        public CompiledLine(ushort op, ushort valA, ushort valB, List<ushort> lit)
-        {
-            BitField opcode = new BitField(0, 4);
-            opcode.Set(op);
-            BitField valueA = new BitField(5, 10);
-            valueA.Set(valA);
-            BitField valueB = new BitField(11, 16);
-            valueB.Set(valB);
-
-            binary += (char)(opcode.Value() | valueA.Value() | valueB.Value());
-
-            foreach (ushort u in lit)
-            {
-                binary += u;
-            }
-        }
-
-        public void append(string input, out string output)
-        {
-            output = input + binary;
-        }
-    }
-
-    public interface State
-    {
-        State pass();
-    }
-
-    struct Bittable
-    {
-        public void put(int bits, byte offset) { }
-    }
-
-    struct BitField
-    {
-        ushort mask;
-        ushort value;
-        char low;
-        char high;
-
-        public BitField(int low, int high)
-        {
-            this = new BitField((char)low, (char)high);
-        }
-
-        public BitField(char low, char high)
-        {
-            mask = (ushort)0xffff;
-            mask &= (ushort)(0xffff << low + 16);
-            mask &= (ushort)(0xffff <<high);
-            value = (ushort)0;
-            this.low = low;
-            this.high = high;
-        }
-
-        public void Set(ushort c)
-        {
-            value = (ushort)(c << low);
-        }
-
-        public ushort Value()
-        {
-            return (ushort)(value & mask);
-        }
-    }
-
-    struct OpCode
-    {
-        BitField value;
-
-        public OpCode(int code)
-        {
-            value = new BitField((char)0, (char)4);
-            value.Set((char)code);
-        }
-
-        public OpCode(char code)
-        {
-            value = new BitField((char)0, (char)4);
-            value.Set(code);
-        }
-
-        public ushort Value()
-        {
-            return value.Value();
-        }
-    }
-
-    struct ValueA
-    {
-        public BitField value;
-
-        public ushort Value()
-        {
-            return value.Value();
-        }
-
-        public ValueA(ushort u)
-        {
-            value = new BitField((char)5, (char)10);
-            value.Set(u);
-        }
-
-        public ValueA(int i)
-        {
-            value = new BitField((char)5, (char)10);
-            value.Set((char)i);
-        }
-    }
-
-    struct ValueB
-    {
-        public BitField value;
-
-        public ushort Value()
-        {
-            return value.Value();
-        }
-
-        public ValueB(ushort u)
-        {
-            value = new BitField((char)11, (char)16);
-            value.Set(u);
-        }
-
-        public ValueB(int i)
-        {
-            value = new BitField((char)11, (char)16);
-            value.Set((char)i);
-        }
-    }
-
-    struct Operation
-    {
-        public BitField op;
-        public BitField valueA;
-        public BitField valueB;
-        public ushort[] literals;
-
-        public Operation(ushort opcode, params ushort[] values)
-        {
-            opcode &= 0xf;
-            op = new BitField(0,4);
-            valueA = new BitField(5,10);
-            valueB = new BitField(11,16);
-            if (opcode == 0)
-            {
-                valueA.Set(opcode);
-                valueB.Set(values[0]);
-            }
-            else
-            {
-                op.Set(opcode);
-                if(values[0]>0x1f)
-                {
-                    valueA.Set(0x1f);//Literal
-                } else {
-                    valueA.Set((ushort)(0x20+values[0]));//Constants
-                }
-                if(values[1]>0x1f)
-                {
-                    valueB.Set(0x1f);//Literal
-                } else {
-                    valueB.Set((ushort)(0x20+values[1]));
-                }
-            }
-            if (values.Length > 2)
-            {
-                literals = new ushort[values.Length - 2];
-                for (int i = 0; i < literals.Length; i++)
-                {
-                    literals[i] = values[i - 2];
-                }
-            }
-            else
-            {
-                literals = new ushort[0];
-            }
-        }
-
-        public string write()
-        {
-            string result = "";
-            ushort operation = (ushort)(valueB.Value() | valueA.Value() | op.Value());
-            result += operation;
-            foreach (ushort u in literals)
-            {
-                result += u;
-            }
-            return result;
-        }
-    }
-
-    public class ClearState : State
-    {
-        string cleanText;
-        string fileLoc;
-
-        public ClearState(string text, string fileLocation)
-        {
-            fileLoc = fileLocation;
-            text.ToUpper();
-            foreach (string line in text.Split('\n', '\r'))
-            {
-                if (line.Contains(';'))
-                {
-                    line.Remove(line.IndexOf(';'),line.IndexOf(' '));
-                }
-                cleanText += line + '\n';
-            }
-        }
-
-        public State pass()
-        {
-            return new MacroPass(cleanText,fileLoc);
-        }
-    }
-
-    public class MacroPass : State
-    {
-        string fileLoc;
-        string output;
-
-        public MacroPass(string input, string fileLocation)
-        {
-            fileLoc = fileLocation;
-            /*input.Replace("vram", "0x8000");
-            input.Replace("start", "0x0");
-            input.Replace("crash", "0x980");
-            input.Replace("end", "exit");
-            input.Replace("exit","0x0");*/
-
-            MessageBox.Show(input);
-            input = Macros.replaceAllMacros(input,fileLoc);
-
-            MessageBox.Show(input);
-            foreach (string line in input.Split('\n','\r'))
-            {
-                if (line.StartsWith(".include"))
-                {
-                    output += File.ReadAllText(fileLoc + line.Substring(9));
+                            opParamResult.nextWord = true;
+                            opParamResult.labelName = Param.Replace("[", "").Replace("]", "").Trim();
+                        }
+                    }
                 }
                 else
                 {
-                    output += line + '\n';
-                }
+                    // if value is < 0x1F we can encode it into the param directly, 
+                    // else it has to be next value!
 
-                MessageBox.Show(line);
-            }
-        }
-
-        public State pass()
-        {
-
-            MessageBox.Show(output);
-            //return new GatherLabelPass(output,fileLoc);
-            return new LineHandler(output, fileLoc);
-        }
-    }
-
-    public class GatherLabelPass : State
-    {
-        string fileLoc;
-        string output;
-        Dictionary<ushort, string> labels;
-
-        public GatherLabelPass(string input, string fileLocation)
-        {
-            fileLoc = fileLocation;
-            ushort i = 0;
-            foreach (string line in input.Split('\n', '\r'))
-            {
-                if (line.StartsWith(":"))
-                {
-                    labels.Add(i, line.Substring(1, line.IndexOf(' ')).Trim());
-                }
-                if (Regex.IsMatch(line, CodeStyles.regexKeywords, RegexOptions.None))
-                {
-                    i++;
-                }
-                i += (ushort)(Regex.Matches(line, CodeStyles.regexLiterals, RegexOptions.None).Count & 3);
-            }
-        }
-
-        public State pass()
-        {
-            return new TranslatePass(output, fileLoc, labels);
-        }
-    }
-
-    public class TranslatePass : State
-    {
-        Dictionary<ushort, string> labels;
-        string fileLoc;
-        string output;
-
-        public TranslatePass(string input, string file, Dictionary<ushort, string> lab)
-        {
-            labels = lab;
-            fileLoc = file;
-            foreach (string line in input.Split('\n', '\r'))
-            {
-                OpCode op = new OpCode(-1);
-                Operation operation = new Operation();
-                line.Trim();
-                int i = 0;
-                foreach (string word in line.Split(' ', ','))
-                {
-                    if (i == 0)
+                    UInt16 maxValue = Convert.ToUInt16("0x1F", 16);
+                    UInt16 literalValue = 0;
+                    try
                     {
-                        #region SelectOpcode
-                        switch (word)
-                        {
-                            case "SET":
-                                op = new OpCode(0x1);
-                                break;
-                            case "ADD":
-                                op = new OpCode(0x2);
-                                break;
-                            case "SUB":
-                                op = new OpCode(0x3);
-                                break;
-                            case "MUL":
-                                op = new OpCode(0x4);
-                                break;
-                            case "DIV":
-                                op = new OpCode(0x5);
-                                break;
-                            case "MOD":
-                                op = new OpCode(0x6);
-                                break;
-                            case "SHL":
-                                op = new OpCode(0x7);
-                                break;
-                            case "SHR":
-                                op = new OpCode(0x8);
-                                break;
-                            case "AND":
-                                op = new OpCode(0x9);
-                                break;
-                            case "BOR":
-                                op = new OpCode(0xa);
-                                break;
-                            case "XOR":
-                                op = new OpCode(0xb);
-                                break;
-                            case "IFE":
-                                op = new OpCode(0xc);
-                                break;
-                            case "IFN":
-                                op = new OpCode(0xd);
-                                break;
-                            case "IFG":
-                                op = new OpCode(0xe);
-                                break;
-                            case "IFB":
-                                op = new OpCode(0xf);
-                                break;
-                            default:
-                                continue;
-                                break;
-                        }
-                        #endregion
-                    }
-                    object value;
-                    if (i == 1)
-                    {
-                        value = new ValueA();
+                        if (Param.Contains("0x"))
+                            literalValue = Convert.ToUInt16(Param, 16);
+                        else
+                            literalValue = Convert.ToUInt16(Param, 10);
 
-                        if (word.StartsWith("0x"))
+                        if (literalValue < maxValue)
                         {
-                            value = new ValueA(0x1f);
+                            opParamResult.Param = Convert.ToUInt16("0x20", 16);
+                            opParamResult.Param += literalValue;
                         }
                         else
                         {
-                            switch (word)
-                            {
-                                case "POP":
-                                    value = new ValueA(0x18);
-                                    break;
-                                case "PEEK":
-                                    value = new ValueA(0x19);
-                                    break;
-                                case "PUSH":
-                                    value = new ValueA(0x1a);
-                                    break;
-                                case "SP":
-                                    value = new ValueA(0x1b);
-                                    break;
-                                case "PC":
-                                    value = new ValueA(0x1c);
-                                    break;
-                                case "O":
-                                    value = new ValueA(0x1d);
-                                    break;
-                            }
-                            if (word.StartsWith("[") && word.EndsWith("]"))
-                            {
-                                //Pointer
-                                value = new ValueA(0x1e);
-                            }
+                            opParamResult.Param = (ushort)dcpuRegisterCodes.NextWord_Literal_Value;
+                            opParamResult.nextWord = true;
+                            opParamResult.NextWordValue = literalValue;
                         }
-                        i++;
                     }
-                    operation.op.Set(op.Value());
+                    catch
+                    {
+                        opParamResult.Param = (ushort)dcpuRegisterCodes.NextWord_Literal_Value;
+                        opParamResult.nextWord = true;
+                        opParamResult.labelName = Param;
+                    }
+
                 }
             }
+
+
+            return opParamResult;
         }
 
-        public State pass()
+        private void ParseData(string _data)
         {
-            return null;
-        }
+            string[] dataFields = _data.Substring(3, _data.Length - 3).Trim().Split(',');
 
-    }
-
-    public class LineHandler : State
-    {
-        public LineHandler(string input, string fileLocation)
-        {
-            Line.deferredLines.Clear();
-            Line.labels.Clear();
-            Line.lines.Clear();
-            ushort pointer = 0;
-            foreach(string line in input.Split('\n','\r'))
+            foreach (string dat in dataFields)
             {
-                if (line.Trim().Length < 1)
+                string valStr = dat.Trim();
+                if (valStr.IndexOf('"') > -1)
                 {
-                    continue;
+                    string asciiLine = dat.Replace("\"", "").Trim();
+                    for (int i = 0; i < asciiLine.Length; i++)
+                    {
+                        machineCode.Add((ushort)asciiLine[i]);
+                    }
                 }
-                Line l = new Line(line,pointer);
-                l.register();
-                pointer += (ushort)(l.getLength());
+                else
+                {
+                    ushort val = 0;
+                    if (valStr.Contains("0x"))
+                        val = Convert.ToUInt16(valStr, 16);
+                    else
+                        val = Convert.ToUInt16(valStr, 10);
+
+                    machineCode.Add((ushort)val);
+                }
             }
-            string output = Line.compileAll();
-            File.WriteAllText(Path.GetFileNameWithoutExtension(fileLocation)+Standards.CompiledFiles.raw, output);
+
         }
 
-        public State pass()
+        private void AssembleLine(string _line)
         {
-            return this;
+            if (_line.Trim().Length == 0) return;
+
+            string line = _line.ToLower();
+
+            if (line[0] == ':')
+            {  // this is awful
+                int sIndex = -1;
+                int sIndex1 = line.IndexOf(' ');
+                int sIndex2 = line.IndexOf('\t');
+                if (sIndex1 < sIndex2 || sIndex2 == -1) sIndex = sIndex1;
+                else if (sIndex2 < sIndex1 || sIndex1 != -1) sIndex = sIndex2;
+                string labelName = line.Substring(1, line.Length - 1);
+                if (sIndex > 1)
+                    labelName = line.Substring(1, sIndex - 1);
+
+                if (m_labelAddressDitionary.ContainsKey(labelName))
+                {
+                    throw new Exception(string.Format("Error! Label '{0}' already exists!", labelName));
+                }
+                m_labelAddressDitionary.Add(labelName.Trim(), (ushort)machineCode.Count);
+
+                if (sIndex < 0) return;
+
+                line = line.Remove(0, sIndex).Trim();
+                if (line.Length < 1) return;
+            }
+
+            string[] splitLine = SafeSplit(line);
+            uint opCode = 0x0;
+
+            string opCommand = splitLine[0].Trim();
+
+            if (opCommand.ToLower() == "dat")
+            {
+                ParseData(line);
+                return;
+            }
+
+            string opParam1 = splitLine[1].Trim();
+            string opParam2 = "";
+
+
+
+            if (m_opDictionary.ContainsKey(opCommand) != true)
+            {
+                throw new Exception(string.Format("Illegal cpu opcode --> {0}", splitLine[0]));
+            }
+            opCode = (uint)m_opDictionary[opCommand] & 0xF;
+
+            if (opCode > 0x0)
+                opParam2 = splitLine[2];// basic function, has second param.
+
+            if (opCode > 0x00)
+            {
+                // Basic! 
+                OpParamResult p1 = ParseParam(opParam1);
+                OpParamResult p2 = ParseParam(opParam2);
+                opCode |= ((uint)p1.Param << 4) & 0x3F0;
+                opCode |= ((uint)p2.Param << 10) & 0xFC00;
+
+                machineCode.Add((ushort)opCode);
+
+                if (p1.nextWord)
+                {
+                    if (p1.labelName.Length > 0)
+                    {
+                        m_labelReferences.Add((ushort)machineCode.Count, p1.labelName);
+                    }
+                    machineCode.Add(p1.NextWordValue);
+
+
+                }
+                if (p2.nextWord)
+                {
+                    if (p2.labelName.Length > 0)
+                    {
+                        m_labelReferences.Add((ushort)machineCode.Count, p2.labelName);
+                    }
+                    machineCode.Add(p2.NextWordValue);
+
+                }
+            }
+            else
+            {
+                // Non basic
+                opCode = (uint)m_opDictionary[opCommand];
+                OpParamResult p1 = ParseParam(opParam1);
+                opCode |= ((uint)p1.Param << 10) & 0xFC00;
+
+                machineCode.Add((ushort)opCode);
+
+                if (p1.nextWord)
+                {
+                    if (p1.labelName.Length > 0)
+                    {
+                        m_labelReferences.Add((ushort)machineCode.Count, p1.labelName);
+                    }
+                    machineCode.Add(p1.NextWordValue);
+
+                }
+            }
+        }
+
+
+        private void SetLabelAddressReferences()
+        {
+            // lets loop through all the locations where we have label references
+            foreach (ushort key in m_labelReferences.Keys)
+            {
+                string labelName = m_labelReferences[key];
+                if (m_labelAddressDitionary.ContainsKey(labelName) != true)
+                {
+                    throw new Exception(string.Format("Unknown label reference '{0}'", labelName));
+                }
+
+                machineCode[key] = m_labelAddressDitionary[labelName];
+            }
+        }
+
+        public bool Assemble(string _filename)
+        {
+            try
+            {
+                if (File.Exists(_filename) != true)
+                {
+                    Console.WriteLine(string.Format("File '{0}' Not Found", _filename));
+                    return false;
+                }
+                m_filename = _filename;
+                machineCode.Clear();
+                m_labelReferences.Clear();
+
+                string[] lines = File.ReadAllLines(_filename);
+
+                foreach (string line in lines)
+                {
+                    Console.WriteLine(line);
+                    if (line.Trim().Length < 1) continue;
+                    if (line[0] == ';') continue;
+                    string processLine = line.Trim();
+                    int commentIndex = 0;
+                    commentIndex = line.IndexOf(";");
+                    if (commentIndex > 0) processLine = line.Substring(0, commentIndex).Trim();
+                    if (processLine.Trim().Length < 1) continue;
+
+                    AssembleLine(processLine);
+
+                }
+                SetLabelAddressReferences();
+
+                Console.WriteLine("Debug Dump");
+                Console.WriteLine("*****");
+                int count = 1;
+                foreach (ushort code in machineCode)
+                {
+                    if (count % 4 == 0)
+                        Console.WriteLine(code.ToString("X"));
+                    else
+                        Console.Write(code.ToString("X") + " ");
+                    count++;
+                }
+
+                SaveOBJ();
+            }
+            catch (Exception E)
+            {
+                Console.WriteLine(string.Format("Exception: {0}\n\tStackTrace: {1}", E.Message, E.StackTrace));
+                return false;
+            }
+            return true;
+        }
+
+        private void SaveOBJ()
+        {
+            string saveFileName = m_filename.Split('.')[0] + Standards.CompiledFiles.raw;
+
+            try
+            {
+                MemoryStream outfile = new MemoryStream();
+                foreach (ushort word in machineCode)
+                {
+                    byte B = (byte)(word >> 8);
+                    byte A = (byte)(word & 0xFF);
+
+                    outfile.WriteByte(B);
+                    outfile.WriteByte(A);
+                }
+                File.WriteAllBytes(saveFileName, outfile.ToArray());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(string.Format("EXCEPTION: {0}\nStackTrace: {1} ", e.Message, e.StackTrace));
+                return;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(string.Format("Saved to '{0}", saveFileName));
         }
     }
-
 }
