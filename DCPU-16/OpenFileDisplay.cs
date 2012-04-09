@@ -228,13 +228,15 @@ namespace DCPU_16
 
         private void compile()
         {
-            if (new CDCPU16Assemble().Assemble(fileOpen))
+            int errorline = 0;
+            string errortext = "";
+            if (new CDCPU16Assemble().Assemble(fileOpen, out errorline, out errortext))
             {
                 MessageBox.Show("Build succeeded!");
             }
             else
             {
-                MessageBox.Show("Error");
+                MessageBox.Show("Error at line "+errorline+'\n'+errortext);
             }
         }
     }

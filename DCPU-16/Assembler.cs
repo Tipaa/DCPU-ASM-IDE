@@ -138,8 +138,9 @@ namespace dcpu16_ASM
             return dat.ToArray();
         }
 
-        private OpParamResult ParseParam(string _param)
+        private OpParamResult ParseParam(string _param, out string errortext)
         {
+            errortext = "";
             OpParamResult opParamResult = new OpParamResult();
 
             // Find easy ones. 
@@ -158,11 +159,13 @@ namespace dcpu16_ASM
                         string[] psplit = Param.Replace("[", "").Replace("]", "").Replace(" ", "").Split('+');
                         if (psplit.Length < 2)
                         {
+                            errortext = string.Format("malformated memory reference '{0}'", Param);
                             throw new Exception(string.Format("malformated memory reference '{0}'", Param));
                         }
                         string addressValue = psplit[0];
                         if (m_regDictionary.ContainsKey("[+" + psplit[1] + "]") != true)
                         {
+                            errortext = string.Format("Invalid register reference in '{0}'", Param);
                             throw new Exception(string.Format("Invalid register reference in '{0}'", Param));
                         }
                         opParamResult.Param = (ushort)m_regDictionary["[+" + psplit[1] + "]"];
@@ -253,8 +256,9 @@ namespace dcpu16_ASM
             return opParamResult;
         }
 
-        private void ParseData(string _data)
+        private void ParseData(string _data, out string errortext)
         {
+            errortext = "";
             string[] dataFields = _data.Substring(3, _data.Length - 3).Trim().Split(',');
 
             foreach (string dat in dataFields)
@@ -282,8 +286,9 @@ namespace dcpu16_ASM
 
         }
 
-        private void AssembleLine(string _line)
+        private void AssembleLine(string _line, out string errortext)
         {
+            errortext = "";
             if (_line.Trim().Length == 0) return;
 
             string line = _line.ToLower();
@@ -301,6 +306,7 @@ namespace dcpu16_ASM
 
                 if (m_labelAddressDitionary.ContainsKey(labelName))
                 {
+                    errortext = string.Format("Error! Label '{0}' already exists!", labelName);
                     throw new Exception(string.Format("Error! Label '{0}' already exists!", labelName));
                 }
                 m_labelAddressDitionary.Add(labelName.Trim(), (ushort)machineCode.Count);
@@ -318,7 +324,7 @@ namespace dcpu16_ASM
 
             if (opCommand.ToLower() == "dat")
             {
-                ParseData(line);
+                ParseData(line, out errortext);
                 return;
             }
 
@@ -329,6 +335,7 @@ namespace dcpu16_ASM
 
             if (m_opDictionary.ContainsKey(opCommand) != true)
             {
+                errortext = string.Format("Illegal cpu opcode --> {0}", splitLine[0]);
                 throw new Exception(string.Format("Illegal cpu opcode --> {0}", splitLine[0]));
             }
             opCode = (uint)m_opDictionary[opCommand] & 0xF;
@@ -339,8 +346,8 @@ namespace dcpu16_ASM
             if (opCode > 0x00)
             {
                 // Basic! 
-                OpParamResult p1 = ParseParam(opParam1);
-                OpParamResult p2 = ParseParam(opParam2);
+                OpParamResult p1 = ParseParam(opParam1, out errortext);
+                OpParamResult p2 = ParseParam(opParam2, out errortext);
                 opCode |= ((uint)p1.Param << 4) & 0x3F0;
                 opCode |= ((uint)p2.Param << 10) & 0xFC00;
 
@@ -370,7 +377,7 @@ namespace dcpu16_ASM
             {
                 // Non basic
                 opCode = (uint)m_opDictionary[opCommand];
-                OpParamResult p1 = ParseParam(opParam1);
+                OpParamResult p1 = ParseParam(opParam1, out errortext);
                 opCode |= ((uint)p1.Param << 10) & 0xFC00;
 
                 machineCode.Add((ushort)opCode);
@@ -388,14 +395,18 @@ namespace dcpu16_ASM
         }
 
 
-        private void SetLabelAddressReferences()
+        private void SetLabelAddressReferences(out int errorline, out string errortext)
         {
             // lets loop through all the locations where we have label references
+            errorline = 0;
+            errortext = "";
             foreach (ushort key in m_labelReferences.Keys)
             {
+                errorline++;
                 string labelName = m_labelReferences[key];
                 if (m_labelAddressDitionary.ContainsKey(labelName) != true)
                 {
+                    errortext = string.Format("Unknown label reference '{0}'", labelName);
                     throw new Exception(string.Format("Unknown label reference '{0}'", labelName));
                 }
 
@@ -403,13 +414,16 @@ namespace dcpu16_ASM
             }
         }
 
-        public bool Assemble(string _filename)
+        public bool Assemble(string _filename, out int errorline, out string errortext)
         {
+            errorline = 0;
+            errortext = "";
             try
             {
                 if (File.Exists(_filename) != true)
                 {
                     Console.WriteLine(string.Format("File '{0}' Not Found", _filename));
+                    errortext = string.Format("File '{0}' Not Found", _filename);
                     return false;
                 }
                 m_filename = _filename;
@@ -417,10 +431,11 @@ namespace dcpu16_ASM
                 m_labelReferences.Clear();
 
                 string[] lines = File.ReadAllLines(_filename);
-
+                
+                errorline = 1;
                 foreach (string line in lines)
                 {
-                    Console.WriteLine(line);
+                    errorline++;
                     if (line.Trim().Length < 1) continue;
                     if (line[0] == ';') continue;
                     string processLine = line.Trim();
@@ -429,16 +444,18 @@ namespace dcpu16_ASM
                     if (commentIndex > 0) processLine = line.Substring(0, commentIndex).Trim();
                     if (processLine.Trim().Length < 1) continue;
 
-                    AssembleLine(processLine);
+                    AssembleLine(processLine, out errortext);
 
                 }
-                SetLabelAddressReferences();
+                SetLabelAddressReferences(out errorline, out errortext);
 
                 Console.WriteLine("Debug Dump");
                 Console.WriteLine("*****");
                 int count = 1;
+                errorline = 0;
                 foreach (ushort code in machineCode)
                 {
+                    errorline++;
                     if (count % 4 == 0)
                         Console.WriteLine(code.ToString("X"));
                     else
@@ -446,18 +463,21 @@ namespace dcpu16_ASM
                     count++;
                 }
 
-                SaveOBJ();
+                SaveOBJ(out errortext);
             }
             catch (Exception E)
             {
+                errortext = string.Format("Exception: {0}", E.Message);
                 Console.WriteLine(string.Format("Exception: {0}\n\tStackTrace: {1}", E.Message, E.StackTrace));
                 return false;
             }
+            errorline = -1;
             return true;
         }
 
-        private void SaveOBJ()
+        private void SaveOBJ(out string errortext)
         {
+            errortext = "";
             string saveFileName = m_filename.Split('.')[0] + Standards.CompiledFiles.raw;
 
             try
@@ -475,6 +495,7 @@ namespace dcpu16_ASM
             }
             catch (Exception e)
             {
+                errortext = string.Format("Exception: {0}\nStackTrace: {1} ", e.Message, e.StackTrace);
                 Console.WriteLine(string.Format("EXCEPTION: {0}\nStackTrace: {1} ", e.Message, e.StackTrace));
                 return;
             }
