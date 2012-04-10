@@ -396,5 +396,10 @@ namespace DCPU_16
                 new OpenFileDisplay(openFileDialog.FileName, false).Show();
             }
         }
+
+        private void runToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new EmulatorWindow().Show();
+        }
     }
 }

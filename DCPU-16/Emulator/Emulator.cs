@@ -44,20 +44,21 @@ namespace DCPU_16
 
     public partial class Cpu
     {
-        public Cpu(ushort[] initalMemory)
+        public Cpu(ushort[] initialMemory)
         {
-            for (int i = 0; i < initalMemory.Length; i++)
+            Memory = new ushort[initialMemory.Length];
+            for (int i = 0; i < initialMemory.Length; i++)
             {
-                Memory[i] = initalMemory[i];
+                Memory[i] = initialMemory[i];
             }
         }
 
-        private readonly ushort[] Memory = new ushort[0x10000];
-        private readonly ushort[] Registers = new ushort[8];
+        public ushort[] Memory;
+        public ushort[] Registers = new ushort[8];
         private static readonly string[] RegisterNames = new string[] { "A", "B", "C", "X", "Y", "Z", "I", "J" };
-        private ushort PC = 0;
-        private ushort SP = 0;
-        private ushort Overflow = 0;
+        public ushort PC = 0;
+        public ushort SP = 0;
+        public ushort Overflow = 0;
 
         /// <summary>
         /// 
@@ -68,7 +69,7 @@ namespace DCPU_16
         /// <returns>true if basic, false otherwise</returns>
         private bool GetInstr(out int op, out Value a, out Value b)
         {
-            ushort instr = Memory[PC++];
+            ushort instr = Memory[PC++%Memory.Length];
             if ((instr & 0xf) == 0)
             {
                 //non-basic
