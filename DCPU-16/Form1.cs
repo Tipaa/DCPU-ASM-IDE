@@ -53,7 +53,7 @@ namespace DCPU_16
             openFileDialog.Filter = Standard.getCombined(Standards.SourceFiles, Standards.AllFiles);
             if (openFileDialog.ShowDialog().Equals(DialogResult.OK))
             {
-                new OpenFileDisplay(openFileDialog.FileName, false).ShowDialog();
+                new OpenFileDisplay(openFileDialog.FileName, false).Show();
             }
         }
 
