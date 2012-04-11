@@ -496,7 +496,7 @@ namespace dcpu16_ASM
 
             try
             {
-                MemoryStream outfile = new MemoryStream();
+                /*MemoryStream outfile = new MemoryStream();
                 foreach (ushort word in machineCode)
                 {
                     byte B = (byte)(word >> 8);
@@ -505,7 +505,13 @@ namespace dcpu16_ASM
                     outfile.WriteByte(B);
                     outfile.WriteByte(A);
                 }
-                File.WriteAllBytes(saveFileName, outfile.ToArray());
+                File.WriteAllBytes(saveFileName, outfile.ToArray());*/
+                string outs = "";
+                foreach (ushort word in machineCode)
+                {
+                    outs += (char) word;
+                }
+                File.WriteAllText(saveFileName, outs);
             }
             catch (Exception e)
             {

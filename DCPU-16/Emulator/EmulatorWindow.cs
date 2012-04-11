@@ -8,23 +8,100 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
-namespace DCPU_16
+namespace DCPU_16.Emulator
 {
     public partial class EmulatorWindow : Form
     {
-        public Cpu cpu;
+        
+        public IEmulator cpu;
         public string file = "";
         public string binary = "";
+
+        public ushort[] mem;
+        public ushort[] reg;
+        public ushort sp;
+        public ushort pc;
+        public ushort o;
 
         public EmulatorWindow()
         {
             InitializeComponent();
-            cpu = new Cpu(new ushort[1000]);
+            //cpu = new Cpu(new ushort[0x1000]);
+            cpu = new AltCPU();
+            AltEmulatorProxy.Test();
+        }
+
+        public EmulatorState ProvideState()
+        {
+            mem = getValues(memDump.Text);
+            reg = getRegisters();
+            return new EmulatorState(ref mem, ref reg, ref mem, ref sp, ref pc, ref o);
+        }
+
+        public ushort[] getValues(string s)
+        {
+            sp = (ushort)Convert.ToUInt32(numericRegisterSP.Value.ToString(), 16);
+            pc = (ushort)Convert.ToUInt32(numericRegisterPC.Value.ToString(), 16);
+            o = (ushort)Convert.ToUInt32(numericRegisterO.Value.ToString(), 16);
+
+            List<ushort> result = new List<ushort>();
+            foreach (string s1 in s.Split(' ', '\n'))
+            {
+                Console.WriteLine(s1);
+                if (s1.Trim().Length < 1)
+                {
+                    continue;
+                }
+                result.Add((ushort)Convert.ToUInt32(s1.ToLower().Trim(), 16));
+            }
+            return result.ToArray();
+        }
+
+        public ushort[] getRegisters()
+        {
+            List<ushort> result = new List<ushort>();
+
+            result.Add((ushort)Convert.ToUInt32(numericRegisterA.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterB.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterC.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterX.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterY.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterZ.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterI.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterJ.Value.ToString(), 16));
+            
+            return result.ToArray();
+        }
+
+        private void Handle(EmulatorState state)
+        {
+            dumpMemory(state);
+            //dumpStack(state);
+
+            numericRegisterA.Value = state.Registers[0];
+            numericRegisterB.Value = state.Registers[1];
+            numericRegisterC.Value = state.Registers[2];
+            numericRegisterI.Value = state.Registers[6];
+            numericRegisterJ.Value = state.Registers[7];
+            numericRegisterX.Value = state.Registers[3];
+            numericRegisterY.Value = state.Registers[4];
+            numericRegisterZ.Value = state.Registers[5];
+
+            numericRegisterSP.Value = state.SP;
+            numericRegisterPC.Value = state.PC;
+            numericRegisterO.Value = state.O;
         }
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(Convert.ToUInt32(cpuMemSize.Text, 16));
+            cpu.Reset();
+            if (file == "")
+            {
+                btnLoad_Click(null, null);
+            }
+            cpu.LoadProgram(File.ReadAllText(file));
+            Handle(cpu.ProvideState());
+            /*Console.WriteLine(Convert.ToUInt32(cpuMemSize.Text, 16));
             cpu = new Cpu(new ushort[Convert.ToUInt32(cpuMemSize.Text,16)]);
             numericRegisterA.Value = 0;
             numericRegisterB.Value = 0;
@@ -39,32 +116,35 @@ namespace DCPU_16
             numericRegisterO.Value = 0;
             loadBinary(file);
             //cpu.Memory = loadMemory();
-            dumpMemory();
-            dumpStack();
+            dumpMemory(cpu.ProvideState());
+            dumpStack(cpu.ProvideState());*/
         }
 
-        private void dumpMemory()
+        private void dumpMemory(EmulatorState state)
         {
             memDump.Text = "";
             uint i = 0;
-            foreach (ushort u in cpu.Memory)
+            foreach (ushort u in state.Memory)
             {
-                i++;
+                if (i++ > Convert.ToUInt32(cpuMemSize.Text, 16))
+                {
+                    break;
+                }
                 memDump.Text += String.Format("{0:X4} ", u);
                 Console.WriteLine(String.Format("{0:X4} ", i));
             }
         }
 
-        private void dumpStack()
+        private void dumpStack(EmulatorState state)
         {
             stackTextBox.Text = "";
-            for (uint u = cpu.SP; u < cpu.Memory.Length; u++)
+            for (uint u = state.SP; u < state.Memory.Length; u++)
             {
-                stackTextBox.Text += cpu.Memory[u] + '\n';
+                stackTextBox.Text += state.Memory[u] + '\n';
             }
         }
 
-        private ushort[] loadMemory()
+        /*private ushort[] loadMemory()
         {
             ushort[] result = new ushort[cpu.Memory.Length];
             for (int i = 0; i < cpu.Memory.Length; i++)
@@ -73,70 +153,40 @@ namespace DCPU_16
                 memDump.Text.Remove(0, 5);
             }
             return result;
-        }
+        }*/
 
-        private void tick()
+        private void tick(uint i)
         {
             if (cpu == null)
             {
                 btnReset_Click(null, null);
                 return;
             }
-            //dumpMemory();
 
-            cpu.SP = (ushort)Convert.ToUInt32(numericRegisterSP.Value.ToString(), 16);
-            cpu.Overflow = (ushort)Convert.ToUInt32(numericRegisterO.Value.ToString(), 16);
-            cpu.PC = (ushort)Convert.ToUInt32(numericRegisterPC.Value.ToString(), 16);
-            cpu.Registers[0] = (ushort)Convert.ToUInt32(numericRegisterA.Value.ToString(), 16);
-            cpu.Registers[1] = (ushort)Convert.ToUInt32(numericRegisterB.Value.ToString(), 16);
-            cpu.Registers[2] = (ushort)Convert.ToUInt32(numericRegisterC.Value.ToString(), 16);
-            cpu.Registers[3] = (ushort)Convert.ToUInt32(numericRegisterX.Value.ToString(), 16);
-            cpu.Registers[4] = (ushort)Convert.ToUInt32(numericRegisterY.Value.ToString(), 16);
-            cpu.Registers[5] = (ushort)Convert.ToUInt32(numericRegisterZ.Value.ToString(), 16);
-            cpu.Registers[6] = (ushort)Convert.ToUInt32(numericRegisterI.Value.ToString(), 16);
-            cpu.Registers[7] = (ushort)Convert.ToUInt32(numericRegisterJ.Value.ToString(), 16);
+            cpu.ReceiveState(ProvideState());
 
-            cpu.Tick();
+            cpu.StepProgram(i);
 
-            numericRegisterA.Value = cpu.Registers[0];
-            numericRegisterB.Value = cpu.Registers[1];
-            numericRegisterC.Value = cpu.Registers[2];
-            numericRegisterX.Value = cpu.Registers[3];
-            numericRegisterY.Value = cpu.Registers[4];
-            numericRegisterZ.Value = cpu.Registers[5];
-            numericRegisterI.Value = cpu.Registers[6];
-            numericRegisterJ.Value = cpu.Registers[7];
-            numericRegisterSP.Value = cpu.SP;
-            numericRegisterO.Value = cpu.Overflow;
-            numericRegisterPC.Value = cpu.PC;
+            Handle(cpu.ProvideState());
         }
 
         private void loadBinary(string fileName)
-        {
-            binary = File.ReadAllText(fileName);
-            for (int i = 0; i < binary.Length/2; i++)
-            {
-                cpu.Memory[i] = (ushort)binary[i*2+1];
-            }
+        {            
+            cpu.LoadProgram(File.ReadAllText(fileName));
         }
 
         private void btnStep_Click(object sender, EventArgs e)
         {
-            if (cpu == null || cpu.Memory.Length != (ushort)Convert.ToUInt32(cpuMemSize.Text, 16))
+            if (cpu == null)
             {
                 btnReset_Click(null, null);
             }
-            tick();
-            updateView();
+            tick(1);
         }
 
         private void btnRunSteps_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < Convert.ToUInt32(stepsToRunBox.Text, 16); i++)
-            {
-                tick();
-            }
-            updateView();
+            tick(Convert.ToUInt32(stepsToRunBox.Text, 16));
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
@@ -149,11 +199,23 @@ namespace DCPU_16
             }
         }
 
-        private void updateView()
+        private void updateView(EmulatorState state)
         {
+            dumpMemory(state);
+            dumpStack(state);
+        }
 
-            dumpMemory();
-            dumpStack();
+        public static ushort[] binFromFile(string filename)
+        {
+            string bin = File.ReadAllText(filename);
+            ushort[] array = new ushort[bin.Length];
+            int i = 0;
+            foreach (char c in bin)
+            {
+                array[i] = (ushort)c;
+                i++;
+            }
+            return array;
         }
     }
 }

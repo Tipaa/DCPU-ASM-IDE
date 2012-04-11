@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
+using DCPU_16.Emulator;
 
 namespace DCPU_16
 {
@@ -98,6 +99,11 @@ namespace DCPU_16
             {
                 new OpenFileDisplay(openFileDialog.FileName, false).ShowDialog();
             }
+        }
+
+        private void runToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new EmulatorWindow().Show();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DCPU_16
+﻿namespace DCPU_16.Emulator
 {
     partial class EmulatorWindow
     {
@@ -469,10 +469,6 @@
             this.btnLoad.Text = "Load...";
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
-            // 
-            // openFileDialog
-            // 
-            this.openFileDialog.FileName = "openFileDialog1";
             // 
             // EmulatorWindow
             // 

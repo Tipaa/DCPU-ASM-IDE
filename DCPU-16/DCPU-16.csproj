@@ -53,7 +53,9 @@
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
     <Compile Include="Assembler\Assembler.cs" />
+    <Compile Include="Emulator\AltEmulator.cs" />
     <Compile Include="Emulator\Emulator.cs" />
+    <Compile Include="Emulator\IEmulator.cs" />
     <Compile Include="FastTextBox\AutocompleteItem.cs" />
     <Compile Include="FastTextBox\AutocompleteMenu.cs">
       <SubType>Component</SubType>

@@ -10,6 +10,7 @@ using System.IO;
 using FastColoredTextBoxNS;
 using System.Text.RegularExpressions;
 using dcpu16_ASM;
+using DCPU_16.Emulator;
 
 namespace DCPU_16
 {

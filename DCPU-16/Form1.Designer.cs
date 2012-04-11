@@ -33,9 +33,11 @@
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sourceFiledcpuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compiledProgram0x10cToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dCPU16ProjectdprojToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sourceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compiledProgramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.projectFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,8 +59,8 @@
             this.redditOnlineHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.dCPU16ProjectdprojToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.projectFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menustrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,7 +99,7 @@
             this.compiledProgram0x10cToolStripMenuItem,
             this.dCPU16ProjectdprojToolStripMenuItem});
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.newToolStripMenuItem.Text = "New...";
             // 
             // sourceFiledcpuToolStripMenuItem
@@ -114,6 +116,13 @@
             this.compiledProgram0x10cToolStripMenuItem.Text = "Compiled Program (.dcpu)";
             this.compiledProgram0x10cToolStripMenuItem.Click += new System.EventHandler(this.compiledProgram0x10cToolStripMenuItem_Click);
             // 
+            // dCPU16ProjectdprojToolStripMenuItem
+            // 
+            this.dCPU16ProjectdprojToolStripMenuItem.Name = "dCPU16ProjectdprojToolStripMenuItem";
+            this.dCPU16ProjectdprojToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.dCPU16ProjectdprojToolStripMenuItem.Text = "DCPU-16 Project (.dproj)";
+            this.dCPU16ProjectdprojToolStripMenuItem.Click += new System.EventHandler(this.dCPU16ProjectdprojToolStripMenuItem_Click);
+            // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -121,7 +130,7 @@
             this.compiledProgramToolStripMenuItem,
             this.projectFileToolStripMenuItem});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.openToolStripMenuItem.Text = "Open...";
             // 
             // sourceFileToolStripMenuItem
@@ -138,17 +147,24 @@
             this.compiledProgramToolStripMenuItem.Text = "Compiled Program";
             this.compiledProgramToolStripMenuItem.Click += new System.EventHandler(this.compiledProgramToolStripMenuItem_Click);
             // 
+            // projectFileToolStripMenuItem
+            // 
+            this.projectFileToolStripMenuItem.Name = "projectFileToolStripMenuItem";
+            this.projectFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.projectFileToolStripMenuItem.Text = "Project File";
+            this.projectFileToolStripMenuItem.Click += new System.EventHandler(this.projectFileToolStripMenuItem_Click);
+            // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             // 
             // editToolStripMenuItem
@@ -159,6 +175,9 @@
             // 
             // debugToolStripMenuItem
             // 
+            this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.debugToolStripMenuItem1,
+            this.runToolStripMenuItem});
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
             this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.debugToolStripMenuItem.Text = "Debug";
@@ -187,7 +206,7 @@
             this.assemblerToolStripMenuItem,
             this.pseudocodeToolStripMenuItem});
             this.compileFromToolStripMenuItem.Name = "compileFromToolStripMenuItem";
-            this.compileFromToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.compileFromToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.compileFromToolStripMenuItem.Text = "Compile From";
             // 
             // cToolStripMenuItem
@@ -219,7 +238,7 @@
             this.decompileToToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.assemblerToolStripMenuItem1});
             this.decompileToToolStripMenuItem.Name = "decompileToToolStripMenuItem";
-            this.decompileToToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.decompileToToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.decompileToToolStripMenuItem.Text = "Decompile To";
             // 
             // assemblerToolStripMenuItem1
@@ -231,7 +250,7 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             // 
             // macrosToolStripMenuItem
@@ -278,19 +297,18 @@
             // 
             this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.OpenFileDialog_FileOk);
             // 
-            // dCPU16ProjectdprojToolStripMenuItem
+            // debugToolStripMenuItem1
             // 
-            this.dCPU16ProjectdprojToolStripMenuItem.Name = "dCPU16ProjectdprojToolStripMenuItem";
-            this.dCPU16ProjectdprojToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.dCPU16ProjectdprojToolStripMenuItem.Text = "DCPU-16 Project (.dproj)";
-            this.dCPU16ProjectdprojToolStripMenuItem.Click += new System.EventHandler(this.dCPU16ProjectdprojToolStripMenuItem_Click);
+            this.debugToolStripMenuItem1.Name = "debugToolStripMenuItem1";
+            this.debugToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.debugToolStripMenuItem1.Text = "Debug";
             // 
-            // projectFileToolStripMenuItem
+            // runToolStripMenuItem
             // 
-            this.projectFileToolStripMenuItem.Name = "projectFileToolStripMenuItem";
-            this.projectFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.projectFileToolStripMenuItem.Text = "Project File";
-            this.projectFileToolStripMenuItem.Click += new System.EventHandler(this.projectFileToolStripMenuItem_Click);
+            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.runToolStripMenuItem.Text = "Run";
+            this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
             // Window
             // 
@@ -343,6 +361,8 @@
         private System.Windows.Forms.ToolStripMenuItem compiledProgramToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dCPU16ProjectdprojToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem projectFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
     }
 }
 

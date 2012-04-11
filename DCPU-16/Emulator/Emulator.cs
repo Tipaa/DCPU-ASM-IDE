@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
-namespace DCPU_16
+namespace DCPU_16.Emulator
 {
     #region Assembler
 
@@ -42,7 +42,7 @@ namespace DCPU_16
         }
     }
 
-    public partial class Cpu
+    public partial class Cpu : IEmulator
     {
         public Cpu(ushort[] initialMemory)
         {
@@ -87,6 +87,60 @@ namespace DCPU_16
                 return true;
             }
         }
+
+        #region IEmulator Hooks
+
+        public void LoadProgram(string binary)
+        {           
+            int i = 0;
+            foreach (char c in binary)
+            {
+                Memory[i] = (ushort)c;
+                i++;
+            }           
+        }
+
+        public void LoadProgram(ushort[] binary)
+        {
+            uint i = 0;
+            foreach (ushort u in binary)
+            {
+                Memory[i++] = u;
+            }
+        }
+
+        public void StepProgram(uint steps)
+        {
+            while (steps-- > 0)
+            {
+                this.Tick();
+            }
+        }
+
+        public void Reset()
+        {
+            Memory = new ushort[0x10000];
+            Registers = new ushort[8];
+            SP = 0;
+            PC = 0;
+            Overflow = 0;
+        }
+
+        public EmulatorState ProvideState()
+        {
+            return new EmulatorState(ref Memory, ref Registers, ref Memory, ref SP, ref PC, ref Overflow);
+        }
+
+        public void ReceiveState(EmulatorState e)
+        {
+            Memory = e.Memory;
+            Registers = e.Registers;
+            SP = e.SP;
+            PC = e.PC;
+            Overflow = e.O;
+        }
+
+        #endregion
 
         private void Skip()
         {
