@@ -40,7 +40,6 @@ namespace DCPU_16.Emulator
             int i = 0;
             foreach (char c in binary)
             {
-                Console.WriteLine(c);
                 Mem[i] = (ushort)c;
                 i++;
             }

@@ -42,9 +42,9 @@ namespace DCPU_16.Emulator
 
         public ushort[] getValues(string s)
         {
-            sp = (ushort)Convert.ToUInt32(numericRegisterSP.Value.ToString(), 16);
-            pc = (ushort)Convert.ToUInt32(numericRegisterPC.Value.ToString(), 16);
-            o = (ushort)Convert.ToUInt32(numericRegisterO.Value.ToString(), 16);
+            sp = (ushort)Convert.ToUInt32(numericRegisterSP.Value.ToString(), 10);
+            pc = (ushort)Convert.ToUInt32(numericRegisterPC.Value.ToString(), 10);
+            o = (ushort)Convert.ToUInt32(numericRegisterO.Value.ToString(), 10);
 
             string[] s1 = s.Split(' ', '\n');
             for (int i = 0; i < mem.Length; i++)
