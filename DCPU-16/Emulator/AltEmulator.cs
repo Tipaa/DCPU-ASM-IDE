@@ -123,7 +123,13 @@ namespace DCPU_16.Emulator
             }
             else
             {
-                RefLoc(bLoc, (ref ushort b) => AdvancedOpcodes[aLoc](this, ref b));
+                try
+                {
+                    RefLoc(bLoc, (ref ushort b) => AdvancedOpcodes[aLoc](this, ref b));
+                }
+                catch (KeyNotFoundException e)
+                {
+                }
             }
 
             Tick += (uint)CyclesRequiredForCurrentInstruction(instruction);
@@ -325,7 +331,7 @@ namespace DCPU_16.Emulator
             {
                 return "JSR " + disassembleLoc(bLoc);
             }
-            return "UNK " + string.Format("0x{0:X}", aLoc) + ", " + disassembleLoc(bLoc);
+            return "ERR " + string.Format("0x{0:X}", aLoc) + ", " + disassembleLoc(bLoc);
         }
     }
 
@@ -335,10 +341,20 @@ namespace DCPU_16.Emulator
         {
             var program = new ushort[]
         {
-            0x7c01, 0x003b, 0x7de1, 0x1000, 0x0020, 0x7803, 0x1000, 0xc00d,
+            /*0x7c01, 0x003b, 0x7de1, 0x1000, 0x0020, 0x7803, 0x1000, 0xc00d,
             0x7dc1, 0x001a, 0xa861, 0x7c01, 0x2000, 0x2161, 0x2000, 0x8463,
             0x806d, 0x7dc1, 0x000e, 0x9031, 0x7c10, 0x0018, 0x7dc1, 0x001a,
-            0x9037, 0x61c1, 0x7dc1, 0x001a, 0x0000, 0x0000, 0x0000, 0x0000,
+            0x9037, 0x61c1, 0x7dc1, 0x001a, 0x0000, 0x0000, 0x0000, 0x0000,*/
+
+            0x7DC1, 0x0013, 0x01A1, 0x05A1,
+            0x09A1, 0x19A1, 0x1DA1, 0x0DA1,
+            0x11A1, 0x7DA1, 0x8000, 0x8001,
+            0x8011, 0x8021, 0x8061, 0x8071,
+            0x8031, 0x8041, 0x8051, 0x7DC1,
+            0x0002, 0x7DC1, 0x0017, 0x6051,
+            0x6041, 0x6031, 0x6071, 0x6061,
+            0x6021, 0x6011, 0x6001, 0x7DC1,
+            0x001F,
         };
 
             var cpu = new AltCPU();

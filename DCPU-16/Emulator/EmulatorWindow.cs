@@ -28,7 +28,9 @@ namespace DCPU_16.Emulator
             InitializeComponent();
             //cpu = new Cpu(new ushort[0x1000]);
             cpu = new AltCPU();
-            AltEmulatorProxy.Test();
+            AltEmulatorProxy.Test();           
+            this.memDump.ReadOnly = false;
+            mem = new ushort[0x10000];
         }
 
         public EmulatorState ProvideState()
@@ -44,7 +46,20 @@ namespace DCPU_16.Emulator
             pc = (ushort)Convert.ToUInt32(numericRegisterPC.Value.ToString(), 16);
             o = (ushort)Convert.ToUInt32(numericRegisterO.Value.ToString(), 16);
 
-            List<ushort> result = new List<ushort>();
+            string[] s1 = s.Split(' ', '\n');
+            for (int i = 0; i < mem.Length; i++)
+            {
+                if (i < s1.Length)
+                {
+                    if (s1[i].Trim().Length < 1)
+                    {
+                        continue;
+                    }
+                    mem[i] = ((ushort)Convert.ToUInt32(s1[i].ToLower().Trim(), 16));
+                }
+            }
+            
+            /*List<ushort> result = new List<ushort>();
             foreach (string s1 in s.Split(' ', '\n'))
             {
                 Console.WriteLine(s1);
@@ -54,21 +69,23 @@ namespace DCPU_16.Emulator
                 }
                 result.Add((ushort)Convert.ToUInt32(s1.ToLower().Trim(), 16));
             }
-            return result.ToArray();
+            return result.ToArray();*/
+
+            return mem;
         }
 
         public ushort[] getRegisters()
         {
             List<ushort> result = new List<ushort>();
 
-            result.Add((ushort)Convert.ToUInt32(numericRegisterA.Value.ToString(), 16));
-            result.Add((ushort)Convert.ToUInt32(numericRegisterB.Value.ToString(), 16));
-            result.Add((ushort)Convert.ToUInt32(numericRegisterC.Value.ToString(), 16));
-            result.Add((ushort)Convert.ToUInt32(numericRegisterX.Value.ToString(), 16));
-            result.Add((ushort)Convert.ToUInt32(numericRegisterY.Value.ToString(), 16));
-            result.Add((ushort)Convert.ToUInt32(numericRegisterZ.Value.ToString(), 16));
-            result.Add((ushort)Convert.ToUInt32(numericRegisterI.Value.ToString(), 16));
-            result.Add((ushort)Convert.ToUInt32(numericRegisterJ.Value.ToString(), 16));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterA.Value.ToString(), 10));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterB.Value.ToString(), 10));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterC.Value.ToString(), 10));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterX.Value.ToString(), 10));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterY.Value.ToString(), 10));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterZ.Value.ToString(), 10));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterI.Value.ToString(), 10));
+            result.Add((ushort)Convert.ToUInt32(numericRegisterJ.Value.ToString(), 10));
             
             return result.ToArray();
         }
@@ -90,6 +107,8 @@ namespace DCPU_16.Emulator
             numericRegisterSP.Value = state.SP;
             numericRegisterPC.Value = state.PC;
             numericRegisterO.Value = state.O;
+
+            setToolTip();
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -131,7 +150,6 @@ namespace DCPU_16.Emulator
                     break;
                 }
                 memDump.Text += String.Format("{0:X4} ", u);
-                Console.WriteLine(String.Format("{0:X4} ", i));
             }
         }
 
@@ -203,6 +221,18 @@ namespace DCPU_16.Emulator
         {
             dumpMemory(state);
             dumpStack(state);
+
+        }
+
+        private void setToolTip()
+        {
+            int i = (Convert.ToInt32(numericRegisterPC.Value));
+            string s = memDump.Text.Substring(i*5, 4);
+            disassemblerTip.SetToolTip(this.memDump,
+                "PC: " + String.Format("{0:X4}", Convert.ToUInt16(numericRegisterPC.Value)) + '\n' +
+                "Hex: " + s + '\n' +
+                i + "\n" +
+                "Disassembled: " + cpu.Disassemble((ushort)i));
         }
 
         public static ushort[] binFromFile(string filename)
@@ -216,6 +246,16 @@ namespace DCPU_16.Emulator
                 i++;
             }
             return array;
+        }
+
+        private void disassemblerTip_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        private void numericRegisterPC_ValueChanged(object sender, EventArgs e)
+        {
+            setToolTip();
         }
     }
 }

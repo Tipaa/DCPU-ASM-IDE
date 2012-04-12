@@ -90,6 +90,11 @@ namespace DCPU_16.Emulator
 
         #region IEmulator Hooks
 
+        public string Disassemble(ushort address)
+        {
+            return "Unsupported";
+        }
+
         public void LoadProgram(string binary)
         {           
             int i = 0;

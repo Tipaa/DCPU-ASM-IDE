@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.memDump = new System.Windows.Forms.TextBox();
             this.registerALabel = new System.Windows.Forms.Label();
             this.registerBLable = new System.Windows.Forms.Label();
@@ -62,6 +63,7 @@
             this.btnReset = new System.Windows.Forms.Button();
             this.btnLoad = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.disassemblerTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterC)).BeginInit();
@@ -79,7 +81,7 @@
             // 
             this.memDump.BackColor = System.Drawing.SystemColors.Window;
             this.memDump.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.memDump.Location = new System.Drawing.Point(300, 40);
+            this.memDump.Location = new System.Drawing.Point(293, 40);
             this.memDump.Multiline = true;
             this.memDump.Name = "memDump";
             this.memDump.ReadOnly = true;
@@ -227,7 +229,7 @@
             this.cpuMemSize.Name = "cpuMemSize";
             this.cpuMemSize.Size = new System.Drawing.Size(60, 22);
             this.cpuMemSize.TabIndex = 25;
-            this.cpuMemSize.Text = "10000";
+            this.cpuMemSize.Text = "100";
             this.cpuMemSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.cpuMemSize.WordWrap = false;
             // 
@@ -237,7 +239,7 @@
             this.numericRegisterA.Hexadecimal = true;
             this.numericRegisterA.Location = new System.Drawing.Point(60, 40);
             this.numericRegisterA.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -252,7 +254,7 @@
             this.numericRegisterB.Hexadecimal = true;
             this.numericRegisterB.Location = new System.Drawing.Point(60, 80);
             this.numericRegisterB.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -267,7 +269,7 @@
             this.numericRegisterC.Hexadecimal = true;
             this.numericRegisterC.Location = new System.Drawing.Point(60, 120);
             this.numericRegisterC.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -282,7 +284,7 @@
             this.numericRegisterI.Hexadecimal = true;
             this.numericRegisterI.Location = new System.Drawing.Point(60, 160);
             this.numericRegisterI.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -297,7 +299,7 @@
             this.numericRegisterJ.Hexadecimal = true;
             this.numericRegisterJ.Location = new System.Drawing.Point(60, 200);
             this.numericRegisterJ.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -312,7 +314,7 @@
             this.numericRegisterX.Hexadecimal = true;
             this.numericRegisterX.Location = new System.Drawing.Point(60, 240);
             this.numericRegisterX.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -327,7 +329,7 @@
             this.numericRegisterY.Hexadecimal = true;
             this.numericRegisterY.Location = new System.Drawing.Point(60, 280);
             this.numericRegisterY.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -342,7 +344,7 @@
             this.numericRegisterZ.Hexadecimal = true;
             this.numericRegisterZ.Location = new System.Drawing.Point(60, 320);
             this.numericRegisterZ.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -357,7 +359,7 @@
             this.numericRegisterPC.Hexadecimal = true;
             this.numericRegisterPC.Location = new System.Drawing.Point(200, 40);
             this.numericRegisterPC.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -365,6 +367,7 @@
             this.numericRegisterPC.Size = new System.Drawing.Size(60, 22);
             this.numericRegisterPC.TabIndex = 31;
             this.numericRegisterPC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericRegisterPC.ValueChanged += new System.EventHandler(this.numericRegisterPC_ValueChanged);
             // 
             // numericRegisterSP
             // 
@@ -372,7 +375,7 @@
             this.numericRegisterSP.Hexadecimal = true;
             this.numericRegisterSP.Location = new System.Drawing.Point(200, 80);
             this.numericRegisterSP.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -387,7 +390,7 @@
             this.numericRegisterO.Hexadecimal = true;
             this.numericRegisterO.Location = new System.Drawing.Point(200, 120);
             this.numericRegisterO.Maximum = new decimal(new int[] {
-            32767,
+            65535,
             0,
             0,
             0});
@@ -469,6 +472,14 @@
             this.btnLoad.Text = "Load...";
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
+            // disassemblerTip
+            // 
+            this.disassemblerTip.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.disassemblerTip.IsBalloon = true;
+            this.disassemblerTip.ShowAlways = true;
+            this.disassemblerTip.ToolTipTitle = "Disassembled:";
+            this.disassemblerTip.Popup += new System.Windows.Forms.PopupEventHandler(this.disassemblerTip_Popup);
             // 
             // EmulatorWindow
             // 
@@ -562,5 +573,6 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.ToolTip disassemblerTip;
     }
 }

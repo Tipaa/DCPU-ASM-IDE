@@ -18,6 +18,8 @@ namespace DCPU_16.Emulator
         EmulatorState ProvideState();
 
         void ReceiveState(EmulatorState e);
+
+        string Disassemble(ushort address);
     }
 
     public class EmulatorState
