@@ -17,7 +17,7 @@ namespace DCPU_16
     public partial class OpenFileDisplay : Form
     {
         private CodeStyles styles = new CodeStyles();
-        public readonly string fileOpen;
+        public string fileOpen;
         public bool hasModified = false;
         public AutocompleteMenu autoComplete;
 
@@ -118,6 +118,7 @@ namespace DCPU_16
         private void LoadFile(String filename)
         {
             sourceCodeBox.Text = File.ReadAllText(filename);
+            fileOpen = filename;
             initAutoComplete();
             changeStyles();
         }
@@ -363,13 +364,19 @@ namespace DCPU_16
         private void compile()
         {
             string source = sourceCodeBox.Text;
-            string repl = "";
-            foreach (string key in Macros.macros.Keys)
+            IMacro repl;
+            var hash = 0;
+            while (hash != source.Split('T').Length)
             {
-                if (Macros.macros.TryGetValue(key, out repl))
+                hash = source.Split('T').Length;
+                foreach (string key in Macros.macros.Keys)
                 {
-                    source = source.Replace(key, repl);
+                    if (Macros.macros.TryGetValue(key, out repl))
+                    {
+                        source = repl.getReplace(source, key, fileOpen);
+                    }
                 }
+                Console.WriteLine(hash + ":" + source.Split('T').Length);
             }
             if (hasModified && MessageBox.Show("Code must be saved before compiling.", "Save code", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
             {
@@ -400,7 +407,8 @@ namespace DCPU_16
 
         private void runToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            new EmulatorWindow().Show();
+            Console.WriteLine(fileOpen);
+            new EmulatorWindow(fileOpen).Show();
         }
     }
 }

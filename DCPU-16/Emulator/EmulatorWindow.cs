@@ -28,9 +28,16 @@ namespace DCPU_16.Emulator
             InitializeComponent();
             //cpu = new Cpu(new ushort[0x1000]);
             cpu = new AltCPU();
-            AltEmulatorProxy.Test();           
+            //AltEmulatorProxy.Test();           
             this.memDump.ReadOnly = false;
             mem = new ushort[0x10000];
+        }
+
+        public EmulatorWindow(string filepath)
+            : this()
+        {
+            file = filepath.Split('.')[0] + Standards.CompiledFiles.raw;
+            btnReset_Click(null, null);
         }
 
         public EmulatorState ProvideState()

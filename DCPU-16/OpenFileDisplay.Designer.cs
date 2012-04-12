@@ -66,11 +66,11 @@ namespace DCPU_16
             this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.sourceCodeBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripFileType = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripFileLength = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripCurserPosition = new System.Windows.Forms.ToolStripStatusLabel();
+            this.sourceCodeBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -313,13 +313,13 @@ namespace DCPU_16
             // debugToolStripMenuItem
             // 
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-            this.debugToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.debugToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.debugToolStripMenuItem.Text = "Debug";
             // 
             // runToolStripMenuItem1
             // 
             this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
-            this.runToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(109, 22);
             this.runToolStripMenuItem1.Text = "Run";
             this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
             // 
@@ -350,21 +350,6 @@ namespace DCPU_16
             this.saveFileDialog.Title = "Save As...";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
-            // sourceCodeBox
-            // 
-            this.sourceCodeBox.AutoScrollMinSize = new System.Drawing.Size(27, 14);
-            this.sourceCodeBox.BackBrush = null;
-            this.sourceCodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.sourceCodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.sourceCodeBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sourceCodeBox.Location = new System.Drawing.Point(0, 40);
-            this.sourceCodeBox.Name = "sourceCodeBox";
-            this.sourceCodeBox.Paddings = new System.Windows.Forms.Padding(0);
-            this.sourceCodeBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.sourceCodeBox.Size = new System.Drawing.Size(580, 380);
-            this.sourceCodeBox.TabIndex = 0;
-            this.sourceCodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.sourceCodeBox_textChanged);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -386,14 +371,31 @@ namespace DCPU_16
             // toolStripFileLength
             // 
             this.toolStripFileLength.Name = "toolStripFileLength";
-            this.toolStripFileLength.Size = new System.Drawing.Size(69, 17);
+            this.toolStripFileLength.Padding = new System.Windows.Forms.Padding(0, 0, 20, 0);
+            this.toolStripFileLength.Size = new System.Drawing.Size(89, 17);
             this.toolStripFileLength.Text = "placeholder";
             // 
             // toolStripCurserPosition
             // 
             this.toolStripCurserPosition.Name = "toolStripCurserPosition";
-            this.toolStripCurserPosition.Size = new System.Drawing.Size(69, 17);
+            this.toolStripCurserPosition.Padding = new System.Windows.Forms.Padding(0, 0, 20, 0);
+            this.toolStripCurserPosition.Size = new System.Drawing.Size(89, 17);
             this.toolStripCurserPosition.Text = "placeholder";
+            // 
+            // sourceCodeBox
+            // 
+            this.sourceCodeBox.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.sourceCodeBox.BackBrush = null;
+            this.sourceCodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.sourceCodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.sourceCodeBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sourceCodeBox.Location = new System.Drawing.Point(0, 40);
+            this.sourceCodeBox.Name = "sourceCodeBox";
+            this.sourceCodeBox.Paddings = new System.Windows.Forms.Padding(0);
+            this.sourceCodeBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.sourceCodeBox.Size = new System.Drawing.Size(580, 380);
+            this.sourceCodeBox.TabIndex = 0;
+            this.sourceCodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.sourceCodeBox_textChanged);
             // 
             // OpenFileDisplay
             // 
