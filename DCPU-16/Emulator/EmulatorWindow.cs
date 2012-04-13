@@ -105,7 +105,13 @@ namespace DCPU_16.Emulator
         private void Handle(EmulatorState state)
         {
             dumpMemory(state);
-            //dumpStack(state);
+            try
+            {
+                dumpStack(state);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+            }
 
             numericRegisterA.Value = state.Registers[0];
             numericRegisterB.Value = state.Registers[1];
@@ -173,9 +179,14 @@ namespace DCPU_16.Emulator
         private void dumpStack(EmulatorState state)
         {
             stackTextBox.Text = "";
-            for (uint u = state.SP; u < state.Memory.Length; u++)
+            uint u = state.SP;
+            if (u < 0x8000)
             {
-                stackTextBox.Text += state.Memory[u] + '\n';
+                u = 0xffff;
+            }
+            for (; u < state.Memory.Length; u++)
+            {
+                stackTextBox.Text += String.Format("{0:X4}", state.Memory[u]) + '\n';
             }
         }
 
