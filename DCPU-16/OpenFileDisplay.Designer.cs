@@ -232,7 +232,7 @@ namespace DCPU_16
             this.endToolStripMenuItem,
             this.crashToolStripMenuItem});
             this.variablesToolStripMenuItem.Name = "variablesToolStripMenuItem";
-            this.variablesToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.variablesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.variablesToolStripMenuItem.Text = "Variables";
             // 
             // vramToolStripMenuItem
@@ -264,7 +264,7 @@ namespace DCPU_16
             this.replacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.userDefinedToolStripMenuItem});
             this.replacesToolStripMenuItem.Name = "replacesToolStripMenuItem";
-            this.replacesToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.replacesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.replacesToolStripMenuItem.Text = "Replaces";
             // 
             // userDefinedToolStripMenuItem
@@ -276,7 +276,7 @@ namespace DCPU_16
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(129, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem2.Text = "Expand All";
             // 
             // compilerToolStripMenuItem
@@ -389,6 +389,8 @@ namespace DCPU_16
             this.sourceCodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.sourceCodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.sourceCodeBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sourceCodeBox.LineNumberFormat = "{0:#}";
+            this.sourceCodeBox.LineNumberMultiplier = ((uint)(1u));
             this.sourceCodeBox.Location = new System.Drawing.Point(0, 40);
             this.sourceCodeBox.Name = "sourceCodeBox";
             this.sourceCodeBox.Paddings = new System.Windows.Forms.Padding(0);

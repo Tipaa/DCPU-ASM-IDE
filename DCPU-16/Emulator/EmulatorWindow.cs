@@ -31,6 +31,11 @@ namespace DCPU_16.Emulator
             //AltEmulatorProxy.Test();           
             this.memDump.ReadOnly = false;
             mem = new ushort[0x10000];
+            memoryTip.SetToolTip(this.cpuMemLabel, 
+                "This is only how much memory you see - "+
+                "it does not affect the total available memory. "+
+                "Higher numbers are slower."
+                );
         }
 
         public EmulatorWindow(string filepath)
@@ -53,7 +58,7 @@ namespace DCPU_16.Emulator
             pc = (ushort)Convert.ToUInt32(numericRegisterPC.Value.ToString(), 10);
             o = (ushort)Convert.ToUInt32(numericRegisterO.Value.ToString(), 10);
 
-            string[] s1 = s.Split(' ', '\n');
+            string[] s1 = s.Split(' ');
             for (int i = 0; i < mem.Length; i++)
             {
                 if (i < s1.Length)
@@ -152,11 +157,16 @@ namespace DCPU_16.Emulator
             uint i = 0;
             foreach (ushort u in state.Memory)
             {
-                if (i++ > Convert.ToUInt32(cpuMemSize.Text, 16))
+                if (i > Convert.ToUInt32(cpuMemSize.Text, 16))
                 {
                     break;
                 }
                 memDump.Text += String.Format("{0:X4} ", u);
+                if (i % 8 == 7)
+                {
+                    memDump.Text += '\n';
+                }
+                i++;
             }
         }
 

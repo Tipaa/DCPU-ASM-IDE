@@ -347,7 +347,7 @@ namespace dcpu16_ASM
 
 
 
-            if (m_opDictionary.ContainsKey(opCommand) != true)
+            if (!m_opDictionary.ContainsKey(opCommand))
             {
                 errortext = string.Format("Illegal cpu opcode --> {0}", splitLine[0]);
                 throw new Exception(string.Format("Illegal cpu opcode --> {0}", splitLine[0]));

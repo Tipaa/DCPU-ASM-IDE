@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.memDump = new System.Windows.Forms.TextBox();
             this.registerALabel = new System.Windows.Forms.Label();
             this.registerBLable = new System.Windows.Forms.Label();
             this.registerCLabel = new System.Windows.Forms.Label();
@@ -64,6 +63,8 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.disassemblerTip = new System.Windows.Forms.ToolTip(this.components);
+            this.memDump = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.memoryTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterC)).BeginInit();
@@ -76,18 +77,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterSP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterO)).BeginInit();
             this.SuspendLayout();
-            // 
-            // memDump
-            // 
-            this.memDump.BackColor = System.Drawing.SystemColors.Window;
-            this.memDump.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.memDump.Location = new System.Drawing.Point(293, 40);
-            this.memDump.Multiline = true;
-            this.memDump.Name = "memDump";
-            this.memDump.ReadOnly = true;
-            this.memDump.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.memDump.Size = new System.Drawing.Size(300, 400);
-            this.memDump.TabIndex = 0;
             // 
             // registerALabel
             // 
@@ -404,9 +393,9 @@
             this.cpuMemLabel.AutoSize = true;
             this.cpuMemLabel.Location = new System.Drawing.Point(12, 384);
             this.cpuMemLabel.Name = "cpuMemLabel";
-            this.cpuMemLabel.Size = new System.Drawing.Size(44, 13);
+            this.cpuMemLabel.Size = new System.Drawing.Size(48, 13);
             this.cpuMemLabel.TabIndex = 34;
-            this.cpuMemLabel.Text = "Memory";
+            this.cpuMemLabel.Text = "Memory*";
             this.cpuMemLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // setpsToRunLabel
@@ -481,11 +470,35 @@
             this.disassemblerTip.ToolTipTitle = "Disassembled:";
             this.disassemblerTip.Popup += new System.Windows.Forms.PopupEventHandler(this.disassemblerTip_Popup);
             // 
+            // memDump
+            // 
+            this.memDump.AutoScrollMinSize = new System.Drawing.Size(0, 12);
+            this.memDump.BackBrush = null;
+            this.memDump.BackColor = System.Drawing.SystemColors.Window;
+            this.memDump.CommentPrefix = "//";
+            this.memDump.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.memDump.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.memDump.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.memDump.IndentBackColor = System.Drawing.Color.WhiteSmoke;
+            this.memDump.LeftPadding = 20;
+            this.memDump.LineNumberColor = System.Drawing.Color.DimGray;
+            this.memDump.LineNumberFormat = "{0:X4}";
+            this.memDump.LineNumberMultiplier = ((uint)(8u));
+            this.memDump.LineNumberStartValue = ((uint)(0u));
+            this.memDump.Location = new System.Drawing.Point(280, 40);
+            this.memDump.Name = "memDump";
+            this.memDump.Paddings = new System.Windows.Forms.Padding(0);
+            this.memDump.ReadOnly = true;
+            this.memDump.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.memDump.Size = new System.Drawing.Size(340, 400);
+            this.memDump.TabIndex = 0;
+            this.memDump.WordWrap = true;
+            // 
             // EmulatorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 442);
+            this.ClientSize = new System.Drawing.Size(624, 442);
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnRunSteps);
@@ -539,7 +552,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox memDump;
+        private FastColoredTextBoxNS.FastColoredTextBox memDump;
         private System.Windows.Forms.Label registerALabel;
         private System.Windows.Forms.Label registerBLable;
         private System.Windows.Forms.Label registerCLabel;
@@ -574,5 +587,6 @@
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ToolTip disassemblerTip;
+        private System.Windows.Forms.ToolTip memoryTip;
     }
 }

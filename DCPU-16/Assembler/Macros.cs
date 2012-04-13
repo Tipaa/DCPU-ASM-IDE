@@ -27,6 +27,23 @@ namespace DCPU_16
         }
     }
 
+    class RegexReplace : IMacro
+    {
+        string regex;
+        string replacement;
+
+        public RegexReplace(string reg, string repl)
+        {
+            regex = reg;
+            replacement = repl;
+        }
+
+        public string getReplace(string line, string key, string fileLocation)
+        {
+            return Regex.Replace(line,regex, replacement);
+        }
+    }
+
     class IncludeMacro : IMacro
     {       
         public IncludeMacro()

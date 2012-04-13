@@ -152,9 +152,9 @@ namespace DCPU_16
             changedRange.SetStyle(styles.KeywordStyle, CodeStyles.regexNonBasicKeywords);
             changedRange.SetStyle(styles.RegisterStyle, CodeStyles.regexAllRegisters);
             changedRange.SetStyle(styles.DeclaredLabelStyle, CodeStyles.regexDeclareLabels);
-            changedRange.SetStyle(styles.HexPrefix, CodeStyles.regexHexPrefixes);
-            changedRange.SetStyle(styles.LiteralStyle, CodeStyles.regexLiterals);
+            changedRange.SetStyle(styles.HexPrefix, CodeStyles.regexHexPrefixes);            
             changedRange.SetStyle(styles.MacroStyle, CodeStyles.regexMacros);
+            changedRange.SetStyle(styles.LiteralStyle, CodeStyles.regexLiterals);
             changedRange.SetStyle(styles.PointerStyle, CodeStyles.regexPointers);
             changedRange.SetStyle(styles.LabelStyle, CodeStyles.regexLabels);
             changedRange.SetStyle(styles.DefaultStyle, CodeStyles.regexSpace);

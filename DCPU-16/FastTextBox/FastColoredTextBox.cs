@@ -334,6 +334,28 @@ namespace FastColoredTextBoxNS
         }
 
         /// <summary>
+        /// Multiplies line numbers.
+        /// </summary>
+        [DefaultValue(1)]
+        [Description("Multiplies line numbers.")]
+        public uint LineNumberMultiplier
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Multiplies line numbers.
+        /// </summary>
+        [DefaultValue("{0:#;-#}")]
+        [Description("Presents a standard format for the numbers")]
+        public string LineNumberFormat
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Color of line numbers.
         /// </summary>
         [DefaultValue(typeof (Color), "Teal")]
@@ -598,7 +620,7 @@ namespace FastColoredTextBoxNS
         /// <summary>
         /// Comment line prefix.
         /// </summary>
-        [DefaultValue("//")]
+        [DefaultValue(";")]
         [Description("Comment line prefix.")]
         public string CommentPrefix { get; set; }
 
@@ -3073,7 +3095,7 @@ namespace FastColoredTextBoxNS
                                                        e.Graphics, e.ClipRectangle));
                 //draw line number
                 if (ShowLineNumbers)
-                    e.Graphics.DrawString((iLine + lineNumberStartValue).ToString(), Font, lineNumberBrush,
+                    e.Graphics.DrawString(String.Format(this.LineNumberFormat, (iLine*this.LineNumberMultiplier) + lineNumberStartValue).ToString(), Font, lineNumberBrush,
                                           new RectangleF(-10, y, LeftIndent - minLeftIndent - 2 + 10, CharHeight),
                                           new StringFormat(StringFormatFlags.DirectionRightToLeft));
                 //create markers

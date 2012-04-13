@@ -42,9 +42,9 @@ namespace DCPU_16
         public static string regexBasicKeywords = "(SET|ADD|SUB|MUL|DIV|MOD|SHL|SHR|AND|BOR|XOR|IFE|IFN|IFG|IFB)";
         public static string regexNonBasicKeywords = "(JSR|DAT|BRK) ";
         public static string regexAllRegisters = "(A|B|C|I|J|X|Y|Z|SP|PC|O|POP|PUSH|PEEK)";
-        public static string regexHexPrefixes = "(0x|0d|0o|0b)";
+        public static string regexHexPrefixes = "(\\s|,)(0x|0d|0o|0b)";
         public static string regexComments = ";(.*)?";                      //Anything behind a ;
-        public static string regexMacros = "\\.(vram|crash|end|exit|include)";  //All the current macros
+        public static string regexMacros = "\\.(vram|crash|end|exit|(include \".*\"))";  //All the current macros
         public static string regexError = ".*";                             //All other code
 
         public static string regexLiterals = "((" + regexHexPrefixes + "[0-9a-fA-F]{1,8},?)|DAT " + regexValidName + ",? ((" + regexHexPrefixes + "[0-9a-fA-F]{1,8})|(\"(.*)\"))|(\"\\w+\"))";
