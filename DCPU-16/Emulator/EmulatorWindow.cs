@@ -163,8 +163,9 @@ namespace DCPU_16.Emulator
             uint i = 0;
             foreach (ushort u in state.Memory)
             {
-                if (i > Convert.ToUInt32(cpuMemSize.Text, 16))
+                if (i >= Convert.ToUInt32(cpuMemSize.Text, 16))
                 {
+                    memDump.Text = memDump.Text.Remove(memDump.Text.Length - 3);
                     break;
                 }
                 memDump.Text += String.Format("{0:X4} ", u);

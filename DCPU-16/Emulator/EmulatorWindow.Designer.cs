@@ -63,8 +63,8 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.disassemblerTip = new System.Windows.Forms.ToolTip(this.components);
-            this.memDump = new FastColoredTextBoxNS.FastColoredTextBox();
             this.memoryTip = new System.Windows.Forms.ToolTip(this.components);
+            this.memDump = new FastColoredTextBoxNS.FastColoredTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericRegisterC)).BeginInit();
@@ -472,15 +472,14 @@
             // 
             // memDump
             // 
-            this.memDump.AutoScrollMinSize = new System.Drawing.Size(0, 12);
+            this.memDump.AutoScrollMinSize = new System.Drawing.Size(0, 13);
             this.memDump.BackBrush = null;
-            this.memDump.BackColor = System.Drawing.SystemColors.Window;
             this.memDump.CommentPrefix = "//";
             this.memDump.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.memDump.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.memDump.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.memDump.Font = new System.Drawing.Font("Courier New", 8.25F);
             this.memDump.IndentBackColor = System.Drawing.Color.WhiteSmoke;
-            this.memDump.LeftPadding = 20;
+            this.memDump.LeftPadding = 16;
             this.memDump.LineNumberColor = System.Drawing.Color.DimGray;
             this.memDump.LineNumberFormat = "{0:X4}";
             this.memDump.LineNumberMultiplier = ((uint)(8u));
